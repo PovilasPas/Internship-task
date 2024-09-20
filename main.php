@@ -1,17 +1,11 @@
 <?php
 
+require_once "autoload.php";
+
 use src\hyphenators\RegexHyphenator;
 use src\IOUtils;
 
 const RULE_FILE = "data.txt";
-
-spl_autoload_register( function ($class ) {
-    $path = str_replace("\\", DIRECTORY_SEPARATOR, $class);
-    $filePath = $path . ".php";
-    if(file_exists($filePath)) {
-        include $filePath;
-    }
-});
 
 $rules = IOUtils::readFile(RULE_FILE);
 $word = IOUtils::readFromConsole("Enter a word to be hyphenated: ");
