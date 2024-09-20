@@ -1,5 +1,10 @@
 <?php
 
+use src\hyphenators\RegexHyphenator;
+use src\IOUtils;
+
+const RULE_FILE = "data.txt";
+
 spl_autoload_register( function ($class ) {
     $path = str_replace("\\", DIRECTORY_SEPARATOR, $class);
     $filePath = $path . ".php";
@@ -8,21 +13,13 @@ spl_autoload_register( function ($class ) {
     }
 });
 
-use src\Hyphenator;
-use src\Reader;
-use src\Writer;
+$rules = IOUtils::readFile(RULE_FILE);
+$word = IOUtils::readFromConsole("Enter a word to be hyphenated: ");
 
-$rules = Reader::readFile("data.txt");
-
-$word = Reader::readFromConsole("Enter a word to be hyphenated: ");
-
-$hyphenator = new Hyphenator($rules);
-
-$start = hrtime(true);
+$hyphenator = new RegexHyphenator($rules);
+$start = microtime(true);
 $hyphenated = $hyphenator->hyphenate($word);
-$elapsedSecs = (hrtime(true) - $start)/1e+9;
+$elapsed = round((microtime(true) - $start), 6);
 
-Writer::writeToConsole($hyphenated);
-
-Writer::writeToConsole("Hyphenation took: {$elapsedSecs}s");
-
+IOUtils::writeToConsole($hyphenated);
+IOUtils::writeToConsole("Hyphenation took: {$elapsed}s");
