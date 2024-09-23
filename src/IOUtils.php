@@ -1,6 +1,6 @@
 <?php
 
-namespace src;
+namespace App;
 
 use SplFileObject;
 
@@ -16,15 +16,5 @@ class IOUtils
         }
         $file = null;
         return $lines;
-    }
-
-    public static function readFromConsole(string $prompt) : string
-    {
-        return readline($prompt);
-    }
-
-    public static function writeToConsole(string $content) : void
-    {
-        echo $content . PHP_EOL;
     }
 }

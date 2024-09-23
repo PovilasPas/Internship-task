@@ -1,6 +1,6 @@
 <?php
 
-namespace src\hyphenators;
+namespace App\hyphenators;
 
 abstract class AbstractHyphenator implements IHyphenator
 {

@@ -1,9 +1,15 @@
 <?php
 
-spl_autoload_register(function(string $class) {
-   $path = str_replace("\\", DIRECTORY_SEPARATOR, $class);
-   $filePath = $path . ".php";
-   if(file_exists($filePath)) {
-       include $filePath;
-   }
+spl_autoload_register(function (string $class) {
+    $prefix = "App\\";
+    $baseDir = __DIR__ . "/src/";
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0) {
+        return;
+    }
+    $relativeClass = substr($class, $len);
+    $path = $baseDir . str_replace("\\", "/", $relativeClass) . ".php";
+    if(file_exists($path)) {
+        include $path;
+    }
 });
