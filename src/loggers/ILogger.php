@@ -20,5 +20,5 @@ interface ILogger
 
     public function debug(string|\Stringable $message, array $context = []): void;
 
-    public function log($level, string|\Stringable $message, array $context = []): void;
+    public function log(LogLevel $level, string|\Stringable $message, array $context = []): void;
 }

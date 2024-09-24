@@ -15,15 +15,12 @@ class SimpleLogger extends AbstractLogger
         $this->logDir = $logsDir;
     }
 
-    public function log($level, string|\Stringable $message, array $context = []): void
+    public function log(LogLevel $level, string|\Stringable $message, array $context = []): void
     {
-        if (!LogLevel::isLogLevel($level)) {
-            throw new InvalidArgumentException("Invalid log level: $level");
-        }
         if (!file_exists($this->logDir) || !is_dir($this->logDir)) {
             mkdir($this->logDir);
         }
-        $filename = $this->logDir . "/" . $level . ".txt";
+        $filename = $this->logDir . "/" . $level->value . ".txt";
         $file = new SplFileObject($filename, "a");
         $date = new DateTime();
         $message = "[" . $date->format("Y-m-d H:i:s") . "] " . $message;

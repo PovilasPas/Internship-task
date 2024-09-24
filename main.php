@@ -2,26 +2,40 @@
 
 require_once "autoload.php";
 
+use App\cache\SimpleCache;
 use App\hyphenators\RegexHyphenator;
 use App\loggers\SimpleLogger;
 use App\IOUtils;
 
-const RULE_FILE = "data.txt";
+class Main {
+    private const string RULE_FILE = "data.txt";
 
-$rules = IOUtils::readFile(RULE_FILE);
-$word = readline("Enter a word to be hyphenated: ");
+    public static function main()
+    {
+        $cache = new SimpleCache();
+        $logger = new SimpleLogger("logs");
 
-$logger = new SimpleLogger("logs");
-$hyphenator = new RegexHyphenator($rules, $logger);
+        if ($cache->has("data")) {
+            $rules = $cache->get("data");
+        } else {
+            $rules = IOUtils::readFile(self::RULE_FILE);
+            $cache->set("data", $rules);
+        }
 
-$logger->info("Word to be hyphenated: $word");
+        $hyphenator = new RegexHyphenator($rules, $logger);
 
-$start = microtime(true);
-$hyphenated = $hyphenator->hyphenate($word);
-$elapsed = round((microtime(true) - $start), 6);
+        $word = readline("Enter a word to be hyphenated: ");
+        $logger->info("Word to be hyphenated: $word");
 
-$endMessage = "Hyphenation took: {$elapsed}s";
+        $start = microtime(true);
+        $hyphenated = $hyphenator->hyphenate($word);
+        $elapsed = round((microtime(true) - $start), 6);
 
-echo $hyphenated . PHP_EOL;
-$logger->info($endMessage);
-echo $endMessage . PHP_EOL;
+        $endMessage = "Hyphenation took: {$elapsed}s";
+        echo $hyphenated . PHP_EOL;
+        $logger->info($endMessage);
+        echo $endMessage . PHP_EOL;
+    }
+}
+
+Main::main();
