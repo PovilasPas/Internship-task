@@ -10,7 +10,7 @@ class IOUtils
     {
         $file = new SplFileObject($filePath);
         $lines = [];
-        while(!$file->eof()) {
+        while (!$file->eof()) {
             $line = trim($file->fgets());
             $lines[] = $line;
         }
