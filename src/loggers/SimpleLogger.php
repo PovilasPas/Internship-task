@@ -3,7 +3,6 @@
 namespace App\loggers;
 
 use DateTime;
-use http\Exception\InvalidArgumentException;
 use SplFileObject;
 
 class SimpleLogger extends AbstractLogger

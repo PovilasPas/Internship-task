@@ -10,7 +10,7 @@ spl_autoload_register(
         }
         $relativeClass = substr($class, $len);
         $path = $baseDir . str_replace("\\", "/", $relativeClass) . ".php";
-        if(file_exists($path)) {
+        if (file_exists($path)) {
             include $path;
         }
     }

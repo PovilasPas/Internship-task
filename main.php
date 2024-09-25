@@ -7,7 +7,8 @@ use App\hyphenators\RegexHyphenator;
 use App\loggers\SimpleLogger;
 use App\IOUtils;
 
-class Main {
+class Main
+{
     private const string RULE_FILE = "data.txt";
 
     public static function main()

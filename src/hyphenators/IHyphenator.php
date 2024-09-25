@@ -2,6 +2,7 @@
 
 namespace App\hyphenators;
 
-interface IHyphenator {
+interface IHyphenator
+{
     public function hyphenate(string $word) : string;
 }
