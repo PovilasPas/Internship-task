@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Hyphenator;
 
-readonly class RegexHyphenator implements HyphenatorInterface
+class RegexHyphenator implements HyphenatorInterface
 {
-    private array $rules;
+    private readonly array $rules;
 
     public function __construct(array $rules)
     {
@@ -35,7 +35,7 @@ readonly class RegexHyphenator implements HyphenatorInterface
                 }
                 if ($wasFound) {
                     $word = $copy;
-                    echo $rule . PHP_EOL;
+
                     break;
                 }
             }

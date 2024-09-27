@@ -8,11 +8,10 @@ class SimpleCache implements CacheInterface
 {
     private const int DEFAULT_TTL = 300;
 
-    private \Memcached $cache;
+    public function __construct(
+        private readonly \Memcached $cache
+    ) {
 
-    public function __construct(\Memcached $cache)
-    {
-        $this->cache = $cache;
     }
 
     public function get(string $key, mixed $default = null): mixed

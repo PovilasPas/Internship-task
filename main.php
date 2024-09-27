@@ -46,7 +46,6 @@ class Main
         $timer->stopTimer();
         echo $timer->getElapsed() . PHP_EOL;
 
-//        $result = $hyphenator->hyphenate("former");
         IOUtils::writeFile(self::RESULT_FILE, $processedLines);
     }
 }

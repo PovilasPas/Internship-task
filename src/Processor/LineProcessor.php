@@ -8,11 +8,10 @@ use App\Hyphenator\HyphenatorInterface;
 
 class LineProcessor
 {
-    private HyphenatorInterface $hyphenator;
+    public function __construct(
+        private readonly HyphenatorInterface $hyphenator
+    ) {
 
-    public function __construct(HyphenatorInterface $hyphenator)
-    {
-        $this->hyphenator = $hyphenator;
     }
 
     public function process(array $rawLines): array

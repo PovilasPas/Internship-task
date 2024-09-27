@@ -8,11 +8,10 @@ use App\IOUtils;
 
 class SimpleLogger extends AbstractLogger
 {
-    private string $logDir;
+    public function __construct(
+        private readonly string $logDir
+    ) {
 
-    public function __construct(string $logDir)
-    {
-        $this->logDir = $logDir;
     }
 
     public function log(LogLevel $level, string|\Stringable $message, array $context = []): void
