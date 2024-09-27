@@ -1,8 +1,10 @@
 <?php
 
-namespace App\loggers;
+declare(strict_types=1);
 
-abstract class AbstractLogger implements ILogger
+namespace App\Logger;
+
+abstract class AbstractLogger implements LoggerInterface
 {
     public function emergency(string|\Stringable  $message, array $context = []): void
     {

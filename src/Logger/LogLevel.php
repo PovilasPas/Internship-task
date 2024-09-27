@@ -1,6 +1,8 @@
 <?php
 
-namespace App\loggers;
+declare(strict_types=1);
+
+namespace App\Logger;
 
 enum LogLevel: string
 {

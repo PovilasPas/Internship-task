@@ -1,33 +1,35 @@
 <?php
 
-namespace App\cache;
+declare(strict_types=1);
 
-use Memcached;
-use DateInterval;
+namespace App\Cache;
 
-class SimpleCache implements ICache
+class SimpleCache implements CacheInterface
 {
-    private Memcached $cache;
+    private const int DEFAULT_TTL = 300;
 
-    public function __construct()
+    private \Memcached $cache;
+
+    public function __construct(\Memcached $cache)
     {
-        $this->cache = new Memcached();
-        $this->cache->addServer("127.0.0.1", 11211);
+        $this->cache = $cache;
     }
 
     public function get(string $key, mixed $default = null): mixed
     {
         $value = $this->cache->get($key);
         $code = $this->cache->getResultCode();
-        if ($code !== Memcached::RES_SUCCESS) {
+        if ($code !== \Memcached::RES_SUCCESS) {
             return $default;
         }
+
         return $value;
     }
 
-    public function set(string $key, mixed $value, null|int|DateInterval $ttl = null): bool
+    public function set(string $key, mixed $value, null|int|\DateInterval $ttl = null): bool
     {
         $expiration = $this->ttlToSecs($ttl);
+
         return $this->cache->set($key, $value, $expiration);
     }
 
@@ -49,7 +51,7 @@ class SimpleCache implements ICache
         }
         $result = $this->cache->getMulti($keyArr);
 
-        if (!$result) {
+        if ($result === false) {
             $result = [];
         }
 
@@ -62,13 +64,14 @@ class SimpleCache implements ICache
         return $result;
     }
 
-    public function setMultiple(iterable $values, null|int|DateInterval $ttl = null): bool
+    public function setMultiple(iterable $values, null|int|\DateInterval $ttl = null): bool
     {
             $valArr = [];
             $expiration = $this->ttlToSecs($ttl);
             foreach ($values as  $key => $value) {
                 $valArr[$key] = $value;
             }
+
             return $this->cache->setMulti($valArr, $expiration);
     }
 
@@ -85,6 +88,7 @@ class SimpleCache implements ICache
                 return false;
             }
         }
+
         return true;
     }
 
@@ -92,17 +96,20 @@ class SimpleCache implements ICache
     {
         $this->cache->get($key);
         $code = $this->cache->getResultCode();
-        return  $code === Memcached::RES_SUCCESS;
+
+        return  $code === \Memcached::RES_SUCCESS;
     }
 
-    private function ttlToSecs(null|int|DateInterval $ttl): int
+    private function ttlToSecs(null|int|\DateInterval $ttl): int
     {
-        $expiration = 300;
-        if ($ttl instanceof DateInterval) {
-            $expiration =  $ttl->days * 86400 + $ttl->h * 3600 + $ttl->i * 60 + $ttl->s;
-        } elseif ($ttl) {
-            $expiration = $ttl;
+        if ($ttl instanceof \DateInterval) {
+            return $ttl->days * 86400 + $ttl->h * 3600 + $ttl->i * 60 + $ttl->s;
         }
-        return $expiration;
+
+        if($ttl !== null) {
+            return $ttl;
+        }
+
+        return self::DEFAULT_TTL;
     }
 }
