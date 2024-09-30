@@ -21,34 +21,40 @@ class Main
 
     public static function main(): void
     {
-        $mc = new Memcached();
-        $mc->addServer('127.0.0.1', 11211);
-        $cache = new SimpleCache($mc);
-        $key = 'data';
-        if ($cache->has($key)) {
-            $rules = $cache->get($key);
-        } else {
-            $rules = IOUtils::readFile(self::RULE_FILE);
-            $cache->set($key, $rules);
-        }
+//        $mc = new Memcached();
+//        $mc->addServer('127.0.0.1', 11211);
+//        $cache = new SimpleCache($mc);
+//        $key = 'data';
+//        if ($cache->has($key)) {
+//            $rules = $cache->get($key);
+//        } else {
+//            $rules = IOUtils::readFile(self::RULE_FILE);
+//            $cache->set($key, $rules);
+//        }
+//
+//        $logger = new SimpleLogger(self::LOGS_DIR);
+//        $logger->info("Starting processing...");
+//
+//        $rawLines = IOUtils::readFile(self::TO_HYPHENATE);
+//
+//        $hyphenator = new ArrayHyphenator($rules);
+//        $processor = new LineProcessor($hyphenator);
+//
+//        $timer = new Timer();
+//        $timer->startTimer();
+//        $processedLines = $processor->process($rawLines);
+//        $timer->stopTimer();
+//        echo $timer->getElapsed() . PHP_EOL;
+//
+//        IOUtils::writeFile(self::RESULT_FILE, $processedLines);
 
         $logger = new SimpleLogger(self::LOGS_DIR);
-        $logger->info("Starting processing...");
-
-        $rawLines = IOUtils::readFile(self::TO_HYPHENATE);
-
-        $hyphenator = new ArrayHyphenator($rules);
-        $processor = new LineProcessor($hyphenator);
-
-        $timer = new Timer();
-        $timer->startTimer();
-        $processedLines = $processor->process($rawLines);
-        $timer->stopTimer();
-        echo $timer->getElapsed() . PHP_EOL;
-
-//        $result = $hyphenator->hyphenate('contact');
-
-        IOUtils::writeFile(self::RESULT_FILE, $processedLines);
+        try {
+            $conn = new PDO("mysql:host=127.0.0.1;port=3306;dbname=internship_task", "app", "twoday24");
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            $logger->error($e->getMessage());
+        }
     }
 }
 
