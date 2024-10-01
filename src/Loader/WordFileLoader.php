@@ -15,9 +15,7 @@ class WordFileLoader implements FileLoaderInterface
 
     public function load(string $filePath): void
     {
-        $lines = IOUtils::readFile($filePath);
-        foreach ($lines as $line) {
-
-        }
+        $query = "LOAD DATA LOCAL INFILE ? IGNORE INTO TABLE words FIELDS TERMINATED BY '' (word)";
+        $this->connection->prepare($query)->execute([$filePath]);
     }
 }

@@ -7,10 +7,12 @@ namespace App\Hyphenator;
 class HyphenationRule
 {
     private string $pattern;
+    private string $original;
     private array $levels;
 
     public function __construct(string $rule)
     {
+        $this->original = $rule;
         $validNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
         $this->levels = [];
         $chars = str_split($rule);
@@ -45,6 +47,11 @@ class HyphenationRule
     public function getLevelsLength() :int
     {
         return count($this->levels);
+    }
+
+    public function getOriginal(): string
+    {
+        return $this->original;
     }
 
     public function matchesStart(HyphenationWord $word): bool

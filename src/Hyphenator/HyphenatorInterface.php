@@ -6,5 +6,5 @@ namespace App\Hyphenator;
 
 interface HyphenatorInterface
 {
-    public function hyphenate(string $word): string;
+    public function hyphenate(string $word): HyphenationResult;
 }

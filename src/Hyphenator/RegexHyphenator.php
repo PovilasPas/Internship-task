@@ -17,9 +17,10 @@ class RegexHyphenator implements HyphenatorInterface
         $this->rules = $preprocessedRules;
     }
 
-    public function hyphenate(string $word): string
+    public function hyphenate(string $word): HyphenationResult
     {
         $word = $this->preprocessWord(".$word.");
+        $patterns = [];
         foreach ($this->rules as $rule) {
             for ($i = 0; $i < strlen($word) - strlen($rule) + 1; $i++) {
                 $copy = $word;
@@ -35,14 +36,14 @@ class RegexHyphenator implements HyphenatorInterface
                 }
                 if ($wasFound) {
                     $word = $copy;
-
+                    $patterns[] = preg_replace('/0/', '', $rule);
                     break;
                 }
             }
         }
         $word = $this->postprocessWord($word);
 
-        return $word;
+        return new HyphenationResult($word, $patterns);
     }
 
     private function preprocessWord(string $word): string

@@ -15,31 +15,43 @@ class ArrayHyphenator implements HyphenatorInterface
         }
     }
 
-    public function hyphenate(string $word): string
+    public function hyphenate(string $word): HyphenationResult
     {
         $word = new HyphenationWord($word);
+        $patterns = [];
         foreach($this->rules as $rule) {
+            $wasFound = false;
+            $iFrom = -1;
+            $iTo = -1;
+            $from = -1;
             if (str_starts_with($rule->getRule(), '.') && $rule->matchesStart($word)) {
                 $iFrom = 0;
                 $iTo = min($word->getLevelsLength(), $rule->getLevelsLength());
                 $from = 0;
-                $word->updateLevels($rule, $iFrom, $iTo, $from);
+                $wasFound = true;
             } elseif (str_ends_with($rule->getRule(), '.') && $rule->matchesEnd($word)) {
                 $from = $word->getWordLength() - $rule->getRuleLength();
                 $iFrom = abs(min($from, 0));
                 $iTo = $rule->getLevelsLength() - $iFrom;
-                $word->updateLevels($rule, $iFrom, $iTo, $from);
+                $wasFound = true;
             } else {
                 $from = $rule->matchesMiddle($word);
                 if ($from >= 0) {
                     $from -= 1;
                     $iFrom = abs(min($from, 0));
                     $iTo = min($word->getLevelsLength() - $from, $rule->getLevelsLength());
-                    $word->updateLevels($rule, $iFrom, $iTo, $from);
+                    $wasFound = true;
                 }
+            }
+
+            if ($wasFound) {
+                $word->updateLevels($rule, $iFrom, $iTo, $from);
+                $patterns[] = $rule->getOriginal();
             }
         }
 
-        return $word->getHyphenated();
+        $word = $word->getHyphenated();
+
+        return new HyphenationResult($word, $patterns);
     }
 }
