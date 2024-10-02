@@ -6,6 +6,8 @@ namespace App\Hyphenator;
 
 class HyphenationRule
 {
+    private const array VALID_NUMBERS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
     private string $pattern;
     private string $original;
     private array $levels;
@@ -13,20 +15,22 @@ class HyphenationRule
     public function __construct(string $rule)
     {
         $this->original = $rule;
-        $validNumbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
         $this->levels = [];
         $chars = str_split($rule);
-        if (strlen($rule) > 0 && $this->thisCharValid(0, $chars)) {
+        if (
+            strlen($rule) > 0
+            && $this->isCurrentCharValid(0, $chars)
+        ) {
             $this->levels[] = 0;
         }
         for($i = 0; $i < count($chars); $i++) {
-            if ($this->thisCharValid($i, $chars) && $this->nextCharValid($i, $chars)) {
+            if ($this->isCurrentCharValid($i, $chars) && $this->isNextCharValid($i, $chars)) {
                 $this->levels[] = 0;
             } elseif (is_numeric($chars[$i])) {
                 $this->levels[] = (int) $chars[$i];
             }
         }
-        $this->pattern = str_replace($validNumbers, '', $rule);
+        $this->pattern = str_replace(self::VALID_NUMBERS, '', $rule);
     }
 
     public function getRule(): string
@@ -84,7 +88,7 @@ class HyphenationRule
             );
     }
 
-    public function matchesMiddle(HyphenationWord $word): int
+    public function compareMiddle(HyphenationWord $word): int
     {
         $wordPattern = strtolower($word->getWord());
         $ruleLevelsLength = $this->getLevelsLength();
@@ -108,14 +112,14 @@ class HyphenationRule
         return -1;
     }
 
-    private function thisCharValid(int $idx, array $chars): bool
+    private function isCurrentCharValid(int $idx, array $chars): bool
     {
         $thisChar = $chars[$idx];
 
         return $thisChar !== '.' && !is_numeric($thisChar);
     }
 
-    private function nextCharValid(int $idx, array $chars): bool
+    private function isNextCharValid(int $idx, array $chars): bool
     {
         $length = count($chars);
 

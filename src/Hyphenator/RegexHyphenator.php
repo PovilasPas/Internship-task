@@ -12,14 +12,14 @@ class RegexHyphenator implements HyphenatorInterface
     {
         $preprocessedRules = [];
         foreach($rules as $rule) {
-            $preprocessedRules[] = $this->preprocessWord($rule);
+            $preprocessedRules[] = $this->preprocessString($rule);
         }
         $this->rules = $preprocessedRules;
     }
 
     public function hyphenate(string $word): HyphenationResult
     {
-        $word = $this->preprocessWord(".$word.");
+        $word = $this->preprocessString(".$word.");
         $patterns = [];
         foreach ($this->rules as $rule) {
             for ($i = 0; $i < strlen($word) - strlen($rule) + 1; $i++) {
@@ -41,19 +41,19 @@ class RegexHyphenator implements HyphenatorInterface
                 }
             }
         }
-        $word = $this->postprocessWord($word);
+        $word = $this->postprocessString($word);
 
         return new HyphenationResult($word, $patterns);
     }
 
-    private function preprocessWord(string $word): string
+    private function preprocessString(string $word): string
     {
         $word = preg_replace('/[a-zA-Z](?!\d|\.|$)/', '${0}0', $word);
 
         return $word;
     }
 
-    private function postprocessWord(string $word): string
+    private function postprocessString(string $word): string
     {
         $word = substr($word, 1, -1);
         $word = preg_replace('/[02468]/', '', $word);

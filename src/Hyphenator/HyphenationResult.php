@@ -6,7 +6,7 @@ namespace App\Hyphenator;
 
 class HyphenationResult
 {
-    public function __construct(private string $word, private array $patterns)
+    public function __construct(private readonly string $word, private readonly array $patterns)
     {
 
     }

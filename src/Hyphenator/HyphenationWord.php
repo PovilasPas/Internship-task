@@ -34,10 +34,10 @@ class HyphenationWord
         return count($this->levels);
     }
 
-    public function updateLevels(HyphenationRule $rule, int $iFrom, int $iTo, int $from): void
+    public function updateLevels(HyphenationRule $rule, int $indexFrom, int $indexTo, int $from): void
     {
         $ruleLevels = $rule->getLevels();
-        for ($i = $iFrom; $i < $iTo; $i++) {
+        for ($i = $indexFrom; $i < $indexTo; $i++) {
             $pos = $from + $i;
             $this->levels[$pos] = max($this->levels[$pos], $ruleLevels[$i]);
         }
@@ -46,9 +46,9 @@ class HyphenationWord
     public function getHyphenated(): string {
         $chars = str_split($this->word);
         $hyphenated = [];
-        foreach ($chars as $idx => $char) {
+        foreach ($chars as $index => $char) {
             $hyphenated[] = $char;
-            if ($idx < count($this->levels) && ($this->levels[$idx] & 1) === 1) {
+            if ($index < count($this->levels) && ($this->levels[$index] & 1) === 1) {
                 $hyphenated[] = '-';
             }
         }

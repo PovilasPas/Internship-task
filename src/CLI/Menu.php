@@ -13,7 +13,7 @@ class Menu
 
     }
 
-    public function getSelection(): ExecutorInterface
+    public function show(): void
     {
         $message = 'Choose an option: ';
         $this->render();
@@ -22,7 +22,7 @@ class Menu
             $this->render();
             $selection = trim(readline($message));
         }
-        return $this->options[$selection]->getAction();
+        $this->options[$selection]->getAction()->execute();
     }
 
     private function render(): void

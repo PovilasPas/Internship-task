@@ -7,7 +7,7 @@ namespace App\Executor;
 use App\Hyphenator\ArrayHyphenator;
 use App\IOUtils;
 
-class FileSourceHyphenatorExecutor implements ExecutorInterface
+class FileHyphenationExecutor implements ExecutorInterface
 {
     public function __construct(private readonly string $filePath, private readonly string $wordToHyphenate)
     {
