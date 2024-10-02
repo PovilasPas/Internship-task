@@ -7,8 +7,13 @@ namespace App\Repository;
 use App\Model\Rule;
 use App\Model\Word;
 
-class RuleRepository extends AbstractRepository
+class RuleRepository implements RepositoryInterface
 {
+    public function __construct(private readonly \PDO $connection)
+    {
+
+    }
+
     public function getRulesMatchingWord(Word $word): array
     {
         $query = '
@@ -53,5 +58,17 @@ class RuleRepository extends AbstractRepository
             $rules[] = new Rule($row['rule'], $row['id']);
         }
         return $rules;
+    }
+
+    public function loadRulesFromFile(string $filePath): void
+    {
+        $query = 'DELETE FROM rules';
+        $this->connection->prepare($query)->execute();
+
+        $query = 'LOAD DATA LOCAL INFILE ? IGNORE INTO TABLE rules FIELDS TERMINATED BY \'\' (rule)';
+        $this->connection->prepare($query)->execute([$filePath]);
+
+        $query = 'UPDATE words SET hyphenated = NULL';
+        $this->connection->prepare($query)->execute();
     }
 }

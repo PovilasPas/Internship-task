@@ -8,7 +8,7 @@ use App\Executor\ExecutorInterface;
 
 class Menu
 {
-    public function __construct(private array $options)
+    public function __construct(private readonly array $options)
     {
 
     }

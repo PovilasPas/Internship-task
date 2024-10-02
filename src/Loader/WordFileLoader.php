@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Loader;
 
-use App\IOUtils;
+use App\Repository\WordRepository;
 
 class WordFileLoader implements FileLoaderInterface
 {
@@ -15,7 +15,7 @@ class WordFileLoader implements FileLoaderInterface
 
     public function load(string $filePath): void
     {
-        $query = "LOAD DATA LOCAL INFILE ? IGNORE INTO TABLE words FIELDS TERMINATED BY '' (word)";
-        $this->connection->prepare($query)->execute([$filePath]);
+        $repository = new WordRepository($this->connection);
+        $repository->loadWordsFromFile($filePath);
     }
 }

@@ -9,7 +9,7 @@ use App\IOUtils;
 
 class FileHyphenationExecutor implements ExecutorInterface
 {
-    public function __construct(private readonly string $filePath, private readonly string $wordToHyphenate)
+    public function __construct(private readonly string $filePath, private readonly string $word)
     {
 
     }
@@ -23,7 +23,7 @@ class FileHyphenationExecutor implements ExecutorInterface
         }
         $rules = IOUtils::readFile($this->filePath);
         $hyphenator = new ArrayHyphenator($rules);
-        $hyphenated = $hyphenator->hyphenate($this->wordToHyphenate);
+        $hyphenated = $hyphenator->hyphenate($this->word);
         echo $hyphenated->getWord() . PHP_EOL;
     }
 }

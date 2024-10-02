@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Loader;
 
-use App\IOUtils;
+use App\Repository\RuleRepository;
 
 class RuleFileLoader implements FileLoaderInterface
 {
@@ -15,13 +15,7 @@ class RuleFileLoader implements FileLoaderInterface
 
     public function load(string $filePath): void
     {
-        $query = 'DELETE FROM rules';
-        $this->connection->prepare($query)->execute();
-
-        $query = 'LOAD DATA LOCAL INFILE ? IGNORE INTO TABLE rules FIELDS TERMINATED BY \'\' (rule)';
-        $this->connection->prepare($query)->execute([$filePath]);
-
-        $query = "UPDATE words SET hyphenated = NULL";
-        $this->connection->prepare($query)->execute();
+        $repository = new RuleRepository($this->connection);
+        $repository->loadRulesFromFile($filePath);
     }
 }

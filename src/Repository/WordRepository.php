@@ -6,8 +6,13 @@ namespace App\Repository;
 
 use App\Model\Word;
 
-class WordRepository extends AbstractRepository
+class WordRepository implements RepositoryInterface
 {
+    public function __construct(private readonly \PDO $connection)
+    {
+
+    }
+
     public function findByWord(string $word): ?Word
     {
         $query = 'SELECT * FROM words WHERE word LIKE ?';
@@ -35,5 +40,11 @@ class WordRepository extends AbstractRepository
         $query = 'UPDATE words SET word = ?, hyphenated = ? WHERE id = ?';
         $statement = $this->connection->prepare($query);
         $statement->execute([$word->getWord(), $word->getHyphenated(), $id]);
+    }
+
+    public function loadWordsFromFile(string $filePath): void
+    {
+        $query = 'LOAD DATA LOCAL INFILE ? IGNORE INTO TABLE words FIELDS TERMINATED BY \'\' (word)';
+        $this->connection->prepare($query)->execute();
     }
 }

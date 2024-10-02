@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-class MatchesRepository extends AbstractRepository
+class MatchesRepository implements RepositoryInterface
 {
+    public function __construct(private readonly \PDO $connection)
+    {
+
+    }
+
     public function insertMatches(array $matches): void
     {
         if (count($matches) <= 0) {

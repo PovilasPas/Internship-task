@@ -23,13 +23,15 @@ class Main
 
     public static function main(): void
     {
-        $host = getenv('HOST');
-        $port = getenv('PORT');
-        $database = getenv('DATABASE');
-        $username = getenv('USERNAME');
-        $password = getenv('PASSWORD');
         $logger = new SimpleLogger(self::LOGS_DIR);
         try {
+            $host = getenv('HOST');
+            $port = getenv('PORT');
+            $database = getenv('DATABASE');
+            $username = getenv('USER');
+            $password = getenv('PASSWORD');
+
+
             $conn = new PDO(
                 "mysql:host=$host;port=$port;dbname=$database",
                 $username,

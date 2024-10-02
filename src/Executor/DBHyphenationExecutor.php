@@ -28,9 +28,9 @@ class DBHyphenationExecutor implements ExecutorInterface
 
         $word = $wordRepo->findByWord($this->word);
         if ($word !== null && $word->getHyphenated() !== null) {
-            $matched = $ruleRepo->getRulesMatchingWord($word);
+            $matchedRules = $ruleRepo->getRulesMatchingWord($word);
             echo 'Hyphenated word: ' . $word->getHyphenated() . PHP_EOL;
-            foreach ($matched as $rule) {
+            foreach ($matchedRules as $rule) {
                 echo 'Matched rule: ' . $rule->getRule() . PHP_EOL;
             }
 
@@ -48,20 +48,22 @@ class DBHyphenationExecutor implements ExecutorInterface
         }, $ruleRepo->getRules());
         $hyphenator = new ArrayHyphenator($rules);
         $result = $hyphenator->hyphenate($this->word);
+
+        $matchedPattern = $ruleRepo->getRulesByPatterns($result->getPatterns());
+        $matches = array_map(function (Rule $item) use ($word) {
+            return new PatternMatch($word->getId(), $item->getId());
+        }, $matchedPattern);
+
+        $this->connection->beginTransaction();
         $wordRepo->updateWord(
             $word->getId(),
             new Word($this->word, null, $result->getWord())
         );
+        $matchRepo->insertMatches($matches);
+        $this->connection->commit();
 
         echo 'Hyphenated word: ' . $result->getWord() . PHP_EOL;
-
-        $matched = $ruleRepo->getRulesByPatterns($result->getPatterns());
-        $matches = array_map(function (Rule $item) use ($word) {
-            return new PatternMatch($word->getId(), $item->getId());
-        }, $matched);
-        $matchRepo->insertMatches($matches);
-
-        foreach ($matched as $rule) {
+        foreach ($matchedPattern as $rule) {
             echo 'Matched rule: ' . $rule->getRule() . PHP_EOL;
         }
     }
