@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\CLI;
 
-use App\Executor\ExecutorInterface;
-
 class Menu
 {
     public function __construct(private readonly array $options)
@@ -19,6 +17,7 @@ class Menu
         $this->render();
         $selection = trim(readline($message));
         while (!array_key_exists($selection, $this->options)) {
+            $this->clear(1);
             $this->render();
             $selection = trim(readline($message));
         }
@@ -27,8 +26,13 @@ class Menu
 
     private function render(): void
     {
-        foreach ($this->options as $idx => $option) {
-            echo $idx . '. ' . $option->getName() . PHP_EOL;
+        foreach ($this->options as $index => $option) {
+            echo $index . '. ' . $option->getName() . PHP_EOL;
         }
+    }
+
+    private function clear(int $extra = 0): void
+    {
+        echo str_repeat("\033[F\033[K", count($this->options) + $extra);
     }
 }

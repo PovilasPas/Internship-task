@@ -24,10 +24,9 @@ class RuleRepository implements RepositoryInterface
         $statement = $this->connection->prepare($query);
         $statement->execute([$word->getId()]);
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $rules = [];
-        foreach ($data as $row) {
-            $rules[] = new Rule($row['rule'], $row['id']);
-        }
+        $rules = array_map(function (array $rule) {
+            return new Rule($rule['rule'], $rule['id']);
+        }, $data);
         return $rules;
     }
 
@@ -37,26 +36,24 @@ class RuleRepository implements RepositoryInterface
         $statement = $this->connection->prepare($query);
         $statement->execute();
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $rules = [];
-        foreach ($data as $row) {
-            $rules[] = new Rule($row['rule'], $row['id']);
-        }
+        $rules = array_map(function (array $rule) {
+            return new Rule($rule['rule'], $rule['id']);
+        }, $data);
         return $rules;
     }
 
     public function getRulesByPatterns(array $patterns): array
     {
-        $rules = [];
         if (count($patterns) <= 0) {
-            return $rules;
+            return [];
         }
         $query = 'SELECT * FROM rules WHERE rule IN (' . str_repeat('?,', count($patterns) - 1) . '?)';
         $statement = $this->connection->prepare($query);
         $statement->execute($patterns);
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        foreach ($data as $row) {
-            $rules[] = new Rule($row['rule'], $row['id']);
-        }
+        $rules = array_map(function (array $rule) {
+            return new Rule($rule['rule'], $rule['id']);
+        }, $data);
         return $rules;
     }
 

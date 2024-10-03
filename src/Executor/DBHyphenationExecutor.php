@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Executor;
 
 use App\Hyphenator\ArrayHyphenator;
-use App\Model\PatternMatch;
 use App\Model\Rule;
 use App\Model\Word;
-use App\Repository\MatchesRepository;
+use App\Processor\DBProcessor;
 use App\Repository\RuleRepository;
 use App\Repository\WordRepository;
 
@@ -24,7 +23,6 @@ class DBHyphenationExecutor implements ExecutorInterface
     {
         $wordRepo = new WordRepository($this->connection);
         $ruleRepo = new RuleRepository($this->connection);
-        $matchRepo = new MatchesRepository($this->connection);
 
         $word = $wordRepo->findByWord($this->word);
         if ($word !== null && $word->getHyphenated() !== null) {
@@ -43,28 +41,18 @@ class DBHyphenationExecutor implements ExecutorInterface
             $word->setId((int) $wordRepo->getLastInsertedId());
         }
 
-        $rules = array_map(function (Rule $item) {
-            return $item->getRule();
+        $rules = array_map(function (Rule $rule) {
+            return $rule->getRule();
         }, $ruleRepo->getRules());
         $hyphenator = new ArrayHyphenator($rules);
-        $result = $hyphenator->hyphenate($this->word);
 
-        $matchedPattern = $ruleRepo->getRulesByPatterns($result->getPatterns());
-        $matches = array_map(function (Rule $item) use ($word) {
-            return new PatternMatch($word->getId(), $item->getId());
-        }, $matchedPattern);
+        $processor = new DBProcessor($this->connection, $hyphenator);
 
-        $this->connection->beginTransaction();
-        $wordRepo->updateWord(
-            $word->getId(),
-            new Word($this->word, null, $result->getWord())
-        );
-        $matchRepo->insertMatches($matches);
-        $this->connection->commit();
+        $result = $processor->process([$word])[0];
 
         echo 'Hyphenated word: ' . $result->getWord() . PHP_EOL;
-        foreach ($matchedPattern as $rule) {
-            echo 'Matched rule: ' . $rule->getRule() . PHP_EOL;
+        foreach ($result->getPatterns() as $rule) {
+            echo 'Matched rule: ' . $rule . PHP_EOL;
         }
     }
 }

@@ -45,6 +45,27 @@ class WordRepository implements RepositoryInterface
     public function loadWordsFromFile(string $filePath): void
     {
         $query = 'LOAD DATA LOCAL INFILE ? IGNORE INTO TABLE words FIELDS TERMINATED BY \'\' (word)';
-        $this->connection->prepare($query)->execute();
+        $this->connection->prepare($query)->execute([$filePath]);
+    }
+
+    public function getWordsWithoutHyphenation(): array
+    {
+        $query = 'SELECT * FROM words WHERE hyphenated IS NULL';
+        $statement = $this->connection->prepare($query);
+        $statement->execute();
+        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
+        $words = array_map(function (array $word) {
+            return new Word($word['word'], $word['id'], $word['hyphenated']);
+        }, $data);
+        return $words;
+    }
+
+    public function hasWordsWithoutHyphenation(): bool
+    {
+        $query = 'SELECT COUNT(*) as `count` FROM words WHERE hyphenated IS NULL';
+        $statement = $this->connection->prepare($query);
+        $statement->execute();
+        $data = $statement->fetch(\PDO::FETCH_ASSOC);
+        return $data['count'] > 0;
     }
 }
