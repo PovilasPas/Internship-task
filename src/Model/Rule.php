@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-class Rule
+class Rule implements ModelInterface
 {
     public function __construct(private string $rule, private ?int $id = null)
     {

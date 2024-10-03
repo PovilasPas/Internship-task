@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-class Word
+class Word implements ModelInterface
 {
     public function __construct(private string $word, private ?int $id = null, private ?string $hyphenated = null)
     {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Model;
 
-class PatternMatch
+class PatternMatch implements ModelInterface
 {
     public function __construct(private int $wordFk, private int $ruleFk, private ?int $id = null)
     {
