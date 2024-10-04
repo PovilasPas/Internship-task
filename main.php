@@ -1,41 +1,54 @@
 <?php
 
-require_once "autoload.php";
+declare(strict_types=1);
 
-use App\cache\SimpleCache;
-use App\hyphenators\RegexHyphenator;
-use App\loggers\SimpleLogger;
+require_once 'autoload.php';
+
+use App\Cache\SimpleCache;
+use App\Hyphenator\ArrayHyphenator;
+use App\Hyphenator\RegexHyphenator;
+use App\Processor\LineProcessor;
+use App\Logger\SimpleLogger;
 use App\IOUtils;
+use App\Timer;
 
 class Main
 {
-    private const string RULE_FILE = "data.txt";
+    private const string RULE_FILE = 'var/rules.txt';
+    private const string TO_HYPHENATE = 'var/data.txt';
+    private const string RESULT_FILE = 'var/result.txt';
+    private const string LOGS_DIR = "logs";
 
-    public static function main()
+    public static function main(): void
     {
-        $cache = new SimpleCache();
-        $logger = new SimpleLogger("logs");
-
-        if ($cache->has("data")) {
-            $rules = $cache->get("data");
+        $mc = new Memcached();
+        $mc->addServer('127.0.0.1', 11211);
+        $cache = new SimpleCache($mc);
+        $key = 'data';
+        if ($cache->has($key)) {
+            $rules = $cache->get($key);
         } else {
             $rules = IOUtils::readFile(self::RULE_FILE);
-            $cache->set("data", $rules);
+            $cache->set($key, $rules);
         }
 
-        $hyphenator = new RegexHyphenator($rules, $logger);
+        $logger = new SimpleLogger(self::LOGS_DIR);
+        $logger->info("Starting processing...");
 
-        $word = readline("Enter a word to be hyphenated: ");
-        $logger->info("Word to be hyphenated: $word");
+        $rawLines = IOUtils::readFile(self::TO_HYPHENATE);
 
-        $start = microtime(true);
-        $hyphenated = $hyphenator->hyphenate($word);
-        $elapsed = round((microtime(true) - $start), 6);
+        $hyphenator = new ArrayHyphenator($rules);
+        $processor = new LineProcessor($hyphenator);
 
-        $endMessage = "Hyphenation took: {$elapsed}s";
-        echo $hyphenated . PHP_EOL;
-        $logger->info($endMessage);
-        echo $endMessage . PHP_EOL;
+        $timer = new Timer();
+        $timer->startTimer();
+        $processedLines = $processor->process($rawLines);
+        $timer->stopTimer();
+        echo $timer->getElapsed() . PHP_EOL;
+
+//        $result = $hyphenator->hyphenate('contact');
+
+        IOUtils::writeFile(self::RESULT_FILE, $processedLines);
     }
 }
 
