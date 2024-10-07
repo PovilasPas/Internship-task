@@ -4,8 +4,20 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Model\Rule;
+
 class IOUtils
 {
+    public static function readRuleFile(string $filePath): array
+    {
+        $file = new \SplFileObject($filePath);
+        $rules = [];
+        foreach ($file as $line) {
+            $rules[] = new Rule(trim($line));
+        }
+        return $rules;
+    }
+
     public static function readFile(string $filePath): array
     {
         $file = new \SplFileObject($filePath);
@@ -31,6 +43,13 @@ class IOUtils
         $file = new \SplFileObject($filePath, 'a');
         foreach ($lines as $line) {
             $file->fwrite($line . PHP_EOL);
+        }
+    }
+
+    public static function printLinesToCLI(array $lines): void
+    {
+        foreach ($lines as $line) {
+            echo $line . PHP_EOL;
         }
     }
 }

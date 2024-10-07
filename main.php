@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 require_once 'autoload.php';
 
-use App\CLI\Menu;
-use App\CLI\MenuAction;
-use App\Executor\DBHyphenationExecutor;
-use App\Executor\EmptyExecutor;
-use App\Executor\FileHyphenationExecutor;
-use App\Executor\HyphenateNotHyphenatedExecutor;
-use App\Executor\LoaderExecutor;
-use App\Loader\RuleFileLoader;
-use App\Loader\WordFileLoader;
+use App\Console\CLI\Menu;
+use App\Console\CLI\MenuAction;
+use App\Console\Executor\DBHyphenationExecutor;
+use App\Console\Executor\EmptyExecutor;
+use App\Console\Executor\FileHyphenationExecutor;
+use App\Console\Executor\HyphenateNotHyphenatedExecutor;
+use App\Console\Executor\LoaderExecutor;
+use App\Console\Hyphenator\ArrayHyphenator;
+use App\Console\Loader\RuleFileLoader;
+use App\Console\Loader\WordFileLoader;
+use App\Console\Processor\DBProcessor;
+use App\DB\ConnectionManager;
 use App\Logger\SimpleLogger;
+use App\Repository\MatchRepository;
+use App\Repository\RuleRepository;
 use App\Repository\WordRepository;
 
 class Main
@@ -25,23 +30,24 @@ class Main
     {
         $logger = new SimpleLogger(self::LOGS_DIR);
         try {
-            $host = getenv('HOST');
-            $port = getenv('PORT');
-            $database = getenv('DATABASE');
-            $username = getenv('USER');
-            $password = getenv('PASSWORD');
+            $connection = ConnectionManager::getConnection();
+            $wordRepository = new WordRepository($connection);
+            $ruleRepository = new RuleRepository($connection);
+            $matchRepository = new MatchRepository($connection);
 
-            $connection = new PDO(
-                "mysql:host=$host;port=$port;dbname=$database",
-                $username,
-                $password,
-                [PDO::MYSQL_ATTR_LOCAL_INFILE => true]
+            $hyphenator = new ArrayHyphenator($ruleRepository->getRules());
+            $processor = new DBProcessor(
+                $wordRepository,
+                $ruleRepository,
+                $matchRepository,
+                $connection,
+                $hyphenator
             );
-            $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-            $wordFileLoader = new LoaderExecutor(new WordFileLoader($connection));
-            $ruleFileLoader = new LoaderExecutor(new RuleFileLoader($connection));
+            $wordFileLoader = new LoaderExecutor(new WordFileLoader($wordRepository));
+            $ruleFileLoader = new LoaderExecutor(new RuleFileLoader($ruleRepository));
             $skip = new EmptyExecutor();
+
             $importMenu = new Menu(
                 [
                     new MenuAction('Import words from file.', $wordFileLoader),
@@ -51,10 +57,12 @@ class Main
             );
             $importMenu->show();
 
-            $wordRepo = new WordRepository($connection);
-            if($wordRepo->hasWordsWithoutHyphenation())
+            if($wordRepository->hasWordsWithoutHyphenation())
             {
-                $hyphenateNotHyphenated = new HyphenateNotHyphenatedExecutor($connection);
+                $hyphenateNotHyphenated = new HyphenateNotHyphenatedExecutor(
+                    $wordRepository,
+                    $processor
+                );
                 echo 'Do you want to hyphenate unhyphenated words in database?' . PHP_EOL;
                 $choiceMenu = new Menu(
                     [
@@ -68,8 +76,8 @@ class Main
             $word = trim(readline('Enter a word to be hyphenated (leave empty to skip this step): '));
 
             if(strlen($word) > 0) {
-                $dbSourceExecutor = new DBHyphenationExecutor($connection, $word);
-                $fileSourceExecutor = new FileHyphenationExecutor(self::RULE_FILE, $word);
+                $dbSourceExecutor = new DBHyphenationExecutor($wordRepository, $ruleRepository, $processor, $word);
+                $fileSourceExecutor = new FileHyphenationExecutor(self::RULE_FILE, $hyphenator, $word);
                 $sourceMenu = new Menu(
                     [
                         new MenuAction('Use database for hyphenation.', $dbSourceExecutor),

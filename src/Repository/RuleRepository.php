@@ -9,8 +9,9 @@ use App\Model\Word;
 
 class RuleRepository implements RepositoryInterface
 {
-    public function __construct(private readonly \PDO $connection)
-    {
+    public function __construct(
+        private readonly \PDO $connection
+    ) {
 
     }
 
@@ -24,9 +25,7 @@ class RuleRepository implements RepositoryInterface
         $statement = $this->connection->prepare($query);
         $statement->execute([$word->getId()]);
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $rules = array_map(function (array $rule) {
-            return new Rule($rule['rule'], $rule['id']);
-        }, $data);
+        $rules = array_map(fn (array $rule) => new Rule($rule['rule'], $rule['id']), $data);
         return $rules;
     }
 
@@ -36,9 +35,7 @@ class RuleRepository implements RepositoryInterface
         $statement = $this->connection->prepare($query);
         $statement->execute();
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $rules = array_map(function (array $rule) {
-            return new Rule($rule['rule'], $rule['id']);
-        }, $data);
+        $rules = array_map(fn (array $rule) => new Rule($rule['rule'], $rule['id']), $data);
         return $rules;
     }
 
@@ -51,14 +48,13 @@ class RuleRepository implements RepositoryInterface
         $statement = $this->connection->prepare($query);
         $statement->execute($patterns);
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $rules = array_map(function (array $rule) {
-            return new Rule($rule['rule'], $rule['id']);
-        }, $data);
+        $rules = array_map(fn (array $rule) => new Rule($rule['rule'], $rule['id']), $data);
         return $rules;
     }
 
     public function loadRulesFromFile(string $filePath): void
     {
+        $this->connection->beginTransaction();
         $query = 'DELETE FROM rules';
         $this->connection->prepare($query)->execute();
 
@@ -67,5 +63,6 @@ class RuleRepository implements RepositoryInterface
 
         $query = 'UPDATE words SET hyphenated = NULL';
         $this->connection->prepare($query)->execute();
+        $this->connection->commit();
     }
 }
