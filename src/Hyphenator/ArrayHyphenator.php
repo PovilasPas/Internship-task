@@ -10,36 +10,49 @@ class ArrayHyphenator implements HyphenatorInterface
 
     public function __construct(array $rules)
     {
+        $this->rules = [];
         foreach($rules as $rule) {
             $this->rules[] = new HyphenationRule($rule);
         }
     }
 
-    public function hyphenate(string $word): string
+    public function hyphenate(string $word): HyphenationResult
     {
         $word = new HyphenationWord($word);
+        $patterns = [];
         foreach($this->rules as $rule) {
+            $wasFound = false;
+            $indexFrom = -1;
+            $indexTo = -1;
+            $from = -1;
             if (str_starts_with($rule->getRule(), '.') && $rule->matchesStart($word)) {
-                $iFrom = 0;
-                $iTo = min($word->getLevelsLength(), $rule->getLevelsLength());
+                $indexFrom = 0;
+                $indexTo = min($word->getLevelsLength(), $rule->getLevelsLength());
                 $from = 0;
-                $word->updateLevels($rule, $iFrom, $iTo, $from);
+                $wasFound = true;
             } elseif (str_ends_with($rule->getRule(), '.') && $rule->matchesEnd($word)) {
                 $from = $word->getWordLength() - $rule->getRuleLength();
-                $iFrom = abs(min($from, 0));
-                $iTo = $rule->getLevelsLength() - $iFrom;
-                $word->updateLevels($rule, $iFrom, $iTo, $from);
+                $indexFrom = abs(min($from, 0));
+                $indexTo = $rule->getLevelsLength() - $indexFrom;
+                $wasFound = true;
             } else {
-                $from = $rule->matchesMiddle($word);
+                $from = $rule->compareMiddle($word);
                 if ($from >= 0) {
                     $from -= 1;
-                    $iFrom = abs(min($from, 0));
-                    $iTo = min($word->getLevelsLength() - $from, $rule->getLevelsLength());
-                    $word->updateLevels($rule, $iFrom, $iTo, $from);
+                    $indexFrom = abs(min($from, 0));
+                    $indexTo = min($word->getLevelsLength() - $from, $rule->getLevelsLength());
+                    $wasFound = true;
                 }
+            }
+
+            if ($wasFound) {
+                $word->updateLevels($rule, $indexFrom, $indexTo, $from);
+                $patterns[] = $rule->getOriginal();
             }
         }
 
-        return $word->getHyphenated();
+        $word = $word->getHyphenated();
+
+        return new HyphenationResult($word, $patterns);
     }
 }

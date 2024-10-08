@@ -18,7 +18,7 @@ class LineProcessor
     {
         $pattern = '/[a-zA-Z]+/';
         $processedLines = [];
-        foreach ($rawLines as  $idx => $rawLine) {
+        foreach ($rawLines as $rawLine) {
             $processedLine = '';
             $matches = [];
             preg_match_all($pattern, $rawLine, $matches, PREG_OFFSET_CAPTURE);
@@ -29,13 +29,12 @@ class LineProcessor
                 $hyphenated = $this->hyphenator->hyphenate($word);
                 if ($i + 1 < count($matches[0])) {
                     $next = $matches[0][$i + 1][1];
-                    $processedLine .= $hyphenated . substr($rawLine, $end, $next - $end);
+                    $processedLine .= $hyphenated->getWord() . substr($rawLine, $end, $next - $end);
                 } else {
-                    $processedLine .= $hyphenated . substr($rawLine, $end);
+                    $processedLine .= $hyphenated->getWord() . substr($rawLine, $end);
                 }
             }
             $processedLines[] = $processedLine;
-            echo $idx . PHP_EOL;
         }
         return $processedLines;
     }
