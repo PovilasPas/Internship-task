@@ -10,8 +10,7 @@ abstract class Response
         protected array $headers,
         protected array $body,
         protected int $code = 200
-    )
-    {
+    ) {
 
     }
 
