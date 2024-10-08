@@ -22,7 +22,7 @@ class WordRepository implements RepositoryInterface
         $statement->execute();
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
         $mapper = new WordMapper();
-        $words = array_map(fn (array $word) => new Word($word['word'], $word['id'], $word['hyphenated']), $data);
+        $words = array_map(fn (array $word): Word => new Word($word['word'], $word['id'], $word['hyphenated']), $data);
         return $words;
     }
 
@@ -83,7 +83,7 @@ class WordRepository implements RepositoryInterface
         $statement = $this->connection->prepare($query);
         $statement->execute();
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $words = array_map(fn (array $word) => new Word($word['word'], $word['id'], $word['hyphenated']), $data);
+        $words = array_map(fn (array $word): Word => new Word($word['word'], $word['id'], $word['hyphenated']), $data);
         return $words;
     }
 

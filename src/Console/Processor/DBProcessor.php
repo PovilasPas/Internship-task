@@ -37,7 +37,7 @@ class DBProcessor
             $results[] = $result;
 
             $matches = array_map(
-                fn (Rule $rule) => new PatternMatch($word->getId(), $rule->getId()),
+                fn (Rule $rule): PatternMatch => new PatternMatch($word->getId(), $rule->getId()),
                 $this->ruleRepository->getRulesByPatterns($result->getPatterns())
             );
 

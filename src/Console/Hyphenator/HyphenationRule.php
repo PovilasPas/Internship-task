@@ -8,25 +8,26 @@ class HyphenationRule
 {
     private const array VALID_NUMBERS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-    private string $pattern;
-    private string $original;
-    private array $levels;
+    private readonly string $pattern;
+    private readonly array $levels;
+    private readonly string $original;
 
     public function __construct(string $rule)
     {
         $this->original = $rule;
-        $this->levels = [];
+        $levels = [];
         $chars = str_split($rule);
         if (strlen($rule) > 0 && $this->isCurrentCharValid(0, $chars)) {
-            $this->levels[] = 0;
+            $levels[] = 0;
         }
         for($i = 0; $i < count($chars); $i++) {
             if ($this->isCurrentCharValid($i, $chars) && $this->isNextCharValid($i, $chars)) {
-                $this->levels[] = 0;
+                $levels = 0;
             } elseif (is_numeric($chars[$i])) {
-                $this->levels[] = (int) $chars[$i];
+                $levels = (int) $chars[$i];
             }
         }
+        $this->levels = $levels;
         $this->pattern = str_replace(self::VALID_NUMBERS, '', $rule);
     }
 

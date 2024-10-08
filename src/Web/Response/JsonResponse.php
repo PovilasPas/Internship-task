@@ -18,9 +18,9 @@ class JsonResponse extends Response
         foreach ($this->headers as $header) {
             header($header);
         }
+        http_response_code($this->code);
         if (count($this->body) > 0) {
             echo json_encode($this->body);
         }
-        http_response_code($this->code);
     }
 }

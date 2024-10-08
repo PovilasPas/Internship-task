@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Console\Executor;
 
 use App\Console\Hyphenator\HyphenatorInterface;
+use App\IOUtils;
 
 class FileHyphenationExecutor implements ExecutorInterface
 {
@@ -22,6 +23,11 @@ class FileHyphenationExecutor implements ExecutorInterface
             throw new \InvalidArgumentException("The specified file does not exist.");
         }
         $hyphenated = $this->hyphenator->hyphenate($this->word);
-        echo $hyphenated->getWord() . PHP_EOL;
+        IOUtils::printLinesToCLI(
+            [
+                'Hyphenated word:',
+                $hyphenated->getWord(),
+            ]
+        );
     }
 }

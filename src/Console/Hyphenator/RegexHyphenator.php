@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace App\Console\Hyphenator;
 
+use App\Model\Rule;
+
 class RegexHyphenator implements HyphenatorInterface
 {
-    private array $rules = [];
+    private readonly array $rules;
 
     public function __construct(array $rules)
     {
-        foreach ($rules as $rule) {
-            $this->rules[] = $rule->getRule();
-        }
+        $this->rules = array_map(fn (Rule $item) => $item->getRule(), $rules);
     }
 
     public function hyphenate(string $word): HyphenationResult

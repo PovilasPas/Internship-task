@@ -25,7 +25,7 @@ class RuleRepository implements RepositoryInterface
         $statement = $this->connection->prepare($query);
         $statement->execute([$word->getId()]);
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $rules = array_map(fn (array $rule) => new Rule($rule['rule'], $rule['id']), $data);
+        $rules = array_map(fn (array $rule): Rule => new Rule($rule['rule'], $rule['id']), $data);
         return $rules;
     }
 
@@ -35,7 +35,7 @@ class RuleRepository implements RepositoryInterface
         $statement = $this->connection->prepare($query);
         $statement->execute();
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $rules = array_map(fn (array $rule) => new Rule($rule['rule'], $rule['id']), $data);
+        $rules = array_map(fn (array $rule): Rule => new Rule($rule['rule'], $rule['id']), $data);
         return $rules;
     }
 
@@ -48,7 +48,7 @@ class RuleRepository implements RepositoryInterface
         $statement = $this->connection->prepare($query);
         $statement->execute($patterns);
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
-        $rules = array_map(fn (array $rule) => new Rule($rule['rule'], $rule['id']), $data);
+        $rules = array_map(fn (array $rule): Rule => new Rule($rule['rule'], $rule['id']), $data);
         return $rules;
     }
 

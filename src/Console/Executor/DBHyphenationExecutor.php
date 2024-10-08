@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Console\Executor;
 
 use App\Console\Processor\DBProcessor;
+use App\IOUtils;
+use App\Model\Rule;
 use App\Model\Word;
 use App\Repository\RuleRepository;
 use App\Repository\WordRepository;
@@ -28,10 +30,14 @@ class DBHyphenationExecutor implements ExecutorInterface
         if ($word !== null && $word->getHyphenated() !== null) {
             $matchedRules = $this->ruleRepository->getRulesMatchingWord($word);
 
-            echo $word->getHyphenated() . PHP_EOL;
-            foreach ($matchedRules as $rule) {
-                echo 'Matched rule: ' . $rule->getRule() . PHP_EOL;
-            }
+            IOUtils::printLinesToCLI(
+                [
+                    'Hyphenated word:',
+                    $word->getHyphenated(),
+                    'Rules matched:',
+                    ...array_map(fn (Rule $rule): string => $rule->getRule(), $matchedRules)
+                ]
+            );
 
             return;
         }
@@ -44,9 +50,13 @@ class DBHyphenationExecutor implements ExecutorInterface
 
         $result = $this->processor->process([$word])[0];
 
-        echo $result->getWord() . PHP_EOL;
-        foreach ($result->getPatterns() as $rule) {
-            echo 'Matched rule: ' . $rule . PHP_EOL;
-        }
+        IOUtils::printLinesToCLI(
+            [
+                'Hyphenated word:',
+                $result->getWord(),
+                'Rules matched:',
+                ...$result->getPatterns()
+            ]
+        );
     }
 }

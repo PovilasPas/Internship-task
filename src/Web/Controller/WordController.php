@@ -7,6 +7,7 @@ namespace App\Web\Controller;
 use App\Mapper\WordMapper;
 use App\Model\Word;
 use App\Repository\WordRepository;
+use App\Web\Request\Request;
 use App\Web\Response\JsonResponse;
 use App\Web\Response\Response;
 
@@ -21,7 +22,7 @@ class WordController
     public function list(): Response {
         $words = $this->repo->getWords();
         $mapper = new WordMapper();
-        $serialized = array_map(fn (Word $item) => $mapper->serialize($item), $words);
+        $serialized = array_map(fn (Word $item): ?array => $mapper->serialize($item), $words);
 
         return new JsonResponse(
             [],
@@ -29,9 +30,9 @@ class WordController
         );
     }
 
-    public function create(array $data): Response {
+    public function create(Request $request): Response {
         $mapper = new WordMapper();
-        $deserialized = $mapper->deserialize($data);
+        $deserialized = $mapper->deserialize($request->getData());
         $this->repo->insertWord($deserialized);
         $id = (int) $this->repo->getLastInsertedId();
         $inserted = $this->repo->getWord($id);
@@ -43,7 +44,7 @@ class WordController
         );
     }
 
-    public function update(int $id, array $data): Response {
+    public function update(int $id, Request $request): Response {
         $word = $this->repo->getWord($id);
         if ($word === null) {
             return new JsonResponse(
@@ -53,7 +54,7 @@ class WordController
             );
         }
         $mapper = new WordMapper();
-        $deserialized = $mapper->deserialize($data);
+        $deserialized = $mapper->deserialize($request->getData());
         $this->repo->updateWord($id, $deserialized);
         $updated = $this->repo->getWord($id);
         $serialized = $mapper->serialize($updated);
