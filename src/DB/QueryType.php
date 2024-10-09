@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\DB;
 
-enum DBAction: string
+enum QueryType: string
 {
     case SELECT = 'SELECT';
     case INSERT = 'INSERT';

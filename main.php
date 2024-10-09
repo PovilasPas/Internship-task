@@ -34,6 +34,7 @@ class Main
         $logger = new SimpleLogger(self::LOGS_DIR);
         try {
             $connection = ConnectionManager::getConnection();
+
             $wordRepository = new WordRepository($connection);
             $ruleRepository = new RuleRepository($connection);
             $matchRepository = new MatchRepository($connection);
