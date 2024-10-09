@@ -6,7 +6,7 @@ require_once 'autoload.php';
 
 use App\Console\CLI\Menu;
 use App\Console\CLI\MenuAction;
-use App\Console\Executor\DBHyphenationExecutor;
+use App\Console\Executor\DatabaseHyphenationExecutor;
 use App\Console\Executor\EmptyExecutor;
 use App\Console\Executor\FileHyphenationExecutor;
 use App\Console\Executor\HyphenateNotHyphenatedExecutor;
@@ -14,7 +14,7 @@ use App\Console\Executor\LoaderExecutor;
 use App\Console\Hyphenator\ArrayHyphenator;
 use App\Console\Loader\RuleFileLoader;
 use App\Console\Loader\WordFileLoader;
-use App\Console\Processor\DBProcessor;
+use App\Console\Processor\DatabaseProcessor;
 use App\DB\ConnectionManager;
 use App\Logger\SimpleLogger;
 use App\Repository\MatchRepository;
@@ -36,7 +36,7 @@ class Main
             $matchRepository = new MatchRepository($connection);
 
             $hyphenator = new ArrayHyphenator($ruleRepository->getRules());
-            $processor = new DBProcessor(
+            $processor = new DatabaseProcessor(
                 $wordRepository,
                 $ruleRepository,
                 $matchRepository,
@@ -76,7 +76,7 @@ class Main
             $word = trim(readline('Enter a word to be hyphenated (leave empty to skip this step): '));
 
             if(strlen($word) > 0) {
-                $dbSourceExecutor = new DBHyphenationExecutor($wordRepository, $ruleRepository, $processor, $word);
+                $dbSourceExecutor = new DatabaseHyphenationExecutor($wordRepository, $ruleRepository, $processor, $word);
                 $fileSourceExecutor = new FileHyphenationExecutor(self::RULE_FILE, $hyphenator, $word);
                 $sourceMenu = new Menu(
                     [

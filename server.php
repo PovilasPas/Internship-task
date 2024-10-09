@@ -8,6 +8,7 @@ use App\Web\Controller\WordController;
 use App\Web\Request\Request;
 use App\Web\Response\JsonResponse;
 use App\Web\Response\Response;
+use App\Web\Response\StatusCode;
 use App\Web\Router\Route;
 use App\Web\Router\Router;
 
@@ -22,15 +23,13 @@ $data = json_decode(file_get_contents('php://input'), true);
 $request = new Request($parsed['path'], $data, $method);
 
 $notFound = new JsonResponse(
-    [],
-    ['message' => 'Not found.'],
-    404
+    body: ['message' => 'Not found.'],
+    code:StatusCode::NOT_FOUND
 );
 
 $notAllowed = new JsonResponse(
-    [],
-    ['message' => 'Method not allowed.'],
-    405
+    body: ['message' => 'Method not allowed.'],
+    code: StatusCode::METHOD_NOT_ALLOWED
 );
 
 $router = new Router($notFound);
@@ -43,11 +42,13 @@ $router->addRoute(
             'GET' => function () use ($connection): Response {
                 $repo = new WordRepository($connection);
                 $controller = new WordController($repo);
+
                 return $controller->list();
             },
-            'POST' => function (array $params, Request $request) use ($connection): Response {
+            'POST' => function (array $parameters, Request $request) use ($connection): Response {
                 $repo = new WordRepository($connection);
                 $controller = new WordController($repo);
+
                 return $controller->create($request);
             }
         ]
@@ -59,16 +60,18 @@ $router->addRoute(
         '/^\/api\/words\/(\d+)$/',
         $notAllowed,
         [
-            'PUT' => function (array $params, Request $request) use ($connection): Response {
-                $id = (int) $params[0];
+            'PUT' => function (array $parameters, Request $request) use ($connection): Response {
+                $id = (int) $parameters[0];
                 $repo = new WordRepository($connection);
                 $controller = new WordController($repo);
+
                 return $controller->update($id, $request);
             },
-            'DELETE' => function (array $params) use ($connection): Response {
-                $id = (int) $params[0];
+            'DELETE' => function (array $parameters) use ($connection): Response {
+                $id = (int) $parameters[0];
                 $repo = new WordRepository($connection);
                 $controller = new WordController($repo);
+
                 return $controller->delete($id);
             }
         ]

@@ -9,7 +9,7 @@ use App\IOUtils;
 class SimpleLogger extends AbstractLogger
 {
     public function __construct(
-        private readonly string $logDir
+        private readonly string $logDir,
     ) {
 
     }

@@ -20,11 +20,12 @@ class HyphenationRule
         if (strlen($rule) > 0 && $this->isCurrentCharValid(0, $chars)) {
             $levels[] = 0;
         }
+
         for($i = 0; $i < count($chars); $i++) {
             if ($this->isCurrentCharValid($i, $chars) && $this->isNextCharValid($i, $chars)) {
-                $levels = 0;
+                $levels[] = 0;
             } elseif (is_numeric($chars[$i])) {
-                $levels = (int) $chars[$i];
+                $levels[] = (int) $chars[$i];
             }
         }
         $this->levels = $levels;

@@ -8,6 +8,7 @@ use App\Model\Rule;
 
 class ArrayHyphenator implements HyphenatorInterface
 {
+    /** @var HyphenationRule[] $rules */
     private readonly array $rules;
 
     public function __construct(array $rules)

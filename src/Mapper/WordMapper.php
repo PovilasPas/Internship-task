@@ -27,6 +27,7 @@ class WordMapper implements MapperInterface
         $word = $data['word'];
         $id = $data['id'] ?? null;
         $hyphenated = $data['hyphenated'] ?? null;
+
         return new Word($word, $id, $hyphenated);
     }
 }

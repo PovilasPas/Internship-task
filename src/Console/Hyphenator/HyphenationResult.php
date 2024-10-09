@@ -8,7 +8,7 @@ class HyphenationResult
 {
     public function __construct(
         private readonly string $word,
-        private readonly array $patterns
+        private readonly array $patterns,
     ) {
 
     }

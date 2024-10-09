@@ -10,7 +10,7 @@ class MenuAction
 {
     public function __construct(
         private readonly string $name,
-        private readonly ExecutorInterface $action
+        private readonly ExecutorInterface $action,
     ) {
 
     }

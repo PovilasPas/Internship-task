@@ -8,7 +8,7 @@ class Rule implements ModelInterface
 {
     public function __construct(
         private string $rule,
-        private ?int $id = null
+        private ?int $id = null,
     ) {
 
     }

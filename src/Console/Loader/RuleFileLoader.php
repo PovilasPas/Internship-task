@@ -9,7 +9,7 @@ use App\Repository\RuleRepository;
 class RuleFileLoader implements FileLoaderInterface
 {
     public function __construct(
-        private readonly RuleRepository $ruleRepository
+        private readonly RuleRepository $ruleRepository,
     ) {
 
     }

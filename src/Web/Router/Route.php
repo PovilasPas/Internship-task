@@ -14,7 +14,7 @@ class Route
     public function __construct(
         private readonly string $pattern,
         private readonly Response $notAllowed,
-        array $handlers
+        array $handlers,
     ) {
         foreach ($handlers as $key => $handler) {
             $this->handlers[strtoupper($key)] = $handler;

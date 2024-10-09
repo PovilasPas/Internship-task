@@ -12,7 +12,7 @@ class FileHyphenationExecutor implements ExecutorInterface
     public function __construct(
         private readonly string $filePath,
         private readonly HyphenatorInterface $hyphenator,
-        private readonly string $word
+        private readonly string $word,
     ) {
 
     }
@@ -20,8 +20,9 @@ class FileHyphenationExecutor implements ExecutorInterface
     public function execute(): void
     {
         if(!file_exists($this->filePath)) {
-            throw new \InvalidArgumentException("The specified file does not exist.");
+            throw new \InvalidArgumentException('The specified file does not exist.');
         }
+
         $hyphenated = $this->hyphenator->hyphenate($this->word);
         IOUtils::printLinesToCLI(
             [

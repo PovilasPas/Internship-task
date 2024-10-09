@@ -6,12 +6,14 @@ namespace App\Web\Request;
 
 class Request
 {
+    private readonly string $method;
+
     public function __construct(
-        protected string $path,
-        protected ?array $data,
-        protected string $method
+        private readonly string $path,
+        private readonly ?array $data,
+        string $method,
     ) {
-        $this->method = strtoupper($this->method);
+        $this->method = strtoupper($method);
     }
 
     public function getPath(): string {

@@ -10,7 +10,7 @@ class Menu
      * @param MenuAction[] $options
      */
     public function __construct(
-        private readonly array $options
+        private readonly array $options,
     ) {
 
     }

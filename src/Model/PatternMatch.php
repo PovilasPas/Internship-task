@@ -7,9 +7,9 @@ namespace App\Model;
 class PatternMatch implements ModelInterface
 {
     public function __construct(
-        private int $wordFk,
-        private int $ruleFk,
-        private ?int $id = null
+        private int $wordId,
+        private int $ruleId,
+        private ?int $id = null,
     ) {
 
     }
@@ -24,23 +24,23 @@ class PatternMatch implements ModelInterface
         $this->id = $id;
     }
 
-    public function getWordFk(): int
+    public function getWordId(): int
     {
-        return $this->wordFk;
+        return $this->wordId;
     }
 
-    public function setWordFk(int $wordFk): void
+    public function setWordId(int $wordId): void
     {
-        $this->wordFk = $wordFk;
+        $this->wordId = $wordId;
     }
 
-    public function getRuleFk(): int
+    public function getRuleId(): int
     {
-        return $this->ruleFk;
+        return $this->ruleId;
     }
 
-    public function setRuleFk(int $ruleFk): void
+    public function setRuleId(int $ruleId): void
     {
-        $this->ruleFk = $ruleFk;
+        $this->ruleId = $ruleId;
     }
 }

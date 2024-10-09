@@ -27,6 +27,7 @@ class ConnectionManager
             $connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
             self::$connection = $connection;
         }
+
         return self::$connection;
     }
 }

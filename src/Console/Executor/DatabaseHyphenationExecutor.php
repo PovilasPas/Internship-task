@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Executor;
 
-use App\Console\Processor\DBProcessor;
+use App\Console\Processor\DatabaseProcessor;
 use App\IOUtils;
 use App\Model\Rule;
 use App\Model\Word;
@@ -12,13 +12,13 @@ use App\Repository\RuleRepository;
 use App\Repository\WordRepository;
 
 
-class DBHyphenationExecutor implements ExecutorInterface
+class DatabaseHyphenationExecutor implements ExecutorInterface
 {
     public function __construct(
         private readonly WordRepository $wordRepository,
         private readonly RuleRepository $ruleRepository,
-        private readonly DBProcessor $processor,
-        private readonly string $word
+        private readonly DatabaseProcessor $processor,
+        private readonly string $word,
     ) {
 
     }
@@ -35,7 +35,7 @@ class DBHyphenationExecutor implements ExecutorInterface
                     'Hyphenated word:',
                     $word->getHyphenated(),
                     'Rules matched:',
-                    ...array_map(fn (Rule $rule): string => $rule->getRule(), $matchedRules)
+                    ...array_map(fn (Rule $rule): string => $rule->getRule(), $matchedRules),
                 ]
             );
 
@@ -55,7 +55,7 @@ class DBHyphenationExecutor implements ExecutorInterface
                 'Hyphenated word:',
                 $result->getWord(),
                 'Rules matched:',
-                ...$result->getPatterns()
+                ...$result->getPatterns(),
             ]
         );
     }

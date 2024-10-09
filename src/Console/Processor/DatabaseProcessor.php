@@ -12,14 +12,14 @@ use App\Repository\MatchRepository;
 use App\Repository\RuleRepository;
 use App\Repository\WordRepository;
 
-class DBProcessor
+class DatabaseProcessor
 {
     public function __construct(
         private readonly WordRepository $wordRepository,
         private readonly RuleRepository $ruleRepository,
         private readonly MatchRepository $matchRepository,
         private readonly \PDO $connection,
-        private readonly HyphenatorInterface $hyphenator
+        private readonly HyphenatorInterface $hyphenator,
     )
     {
 

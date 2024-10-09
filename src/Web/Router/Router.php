@@ -31,6 +31,7 @@ class Router
                 return $route->handle($matches, $request);
             }
         }
+
         return $this->notFound;
     }
 }

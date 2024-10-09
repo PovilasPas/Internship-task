@@ -15,6 +15,7 @@ class IOUtils
         foreach ($file as $line) {
             $rules[] = new Rule(trim($line));
         }
+
         return $rules;
     }
 
@@ -27,6 +28,7 @@ class IOUtils
             $lines[] = $line;
         }
         unset($file);
+
         return $lines;
     }
 
@@ -46,7 +48,7 @@ class IOUtils
         }
     }
 
-    public static function printLinesToCLI(array $lines): void
+    public static function printLinesToCli(array $lines): void
     {
         foreach ($lines as $line) {
             echo $line . PHP_EOL;

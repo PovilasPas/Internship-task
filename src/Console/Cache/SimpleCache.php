@@ -9,7 +9,7 @@ class SimpleCache implements CacheInterface
     private const int DEFAULT_TTL = 300;
 
     public function __construct(
-        private readonly \Memcached $cache
+        private readonly \Memcached $cache,
     ) {
 
     }

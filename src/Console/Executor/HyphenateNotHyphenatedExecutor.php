@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Console\Executor;
 
 use App\Console\Hyphenator\ArrayHyphenator;
-use App\Console\Processor\DBProcessor;
+use App\Console\Processor\DatabaseProcessor;
 use App\Model\Rule;
 use App\Repository\MatchRepository;
 use App\Repository\RuleRepository;
@@ -15,7 +15,7 @@ class HyphenateNotHyphenatedExecutor implements ExecutorInterface
 {
     public function __construct(
         private readonly WordRepository $wordRepository,
-        private readonly DBProcessor $processor
+        private readonly DatabaseProcessor $processor,
     ) {
 
     }

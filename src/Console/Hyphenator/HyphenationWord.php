@@ -9,7 +9,7 @@ class HyphenationWord
     private array $levels;
 
     public function __construct(
-        private readonly string $word
+        private readonly string $word,
     ) {
         $this->levels = array_fill(0, strlen($this->word) - 1, 0);
     }

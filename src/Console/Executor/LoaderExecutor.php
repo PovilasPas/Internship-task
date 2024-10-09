@@ -21,6 +21,7 @@ class LoaderExecutor implements ExecutorInterface
         if (!file_exists($filePath)) {
             throw new InvalidArgumentException('The specified file does not exist');
         }
+
         $this->loader->load($filePath);
     }
 }

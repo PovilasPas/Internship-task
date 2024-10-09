@@ -9,7 +9,7 @@ use App\Console\Hyphenator\HyphenatorInterface;
 class LineProcessor
 {
     public function __construct(
-        private readonly HyphenatorInterface $hyphenator
+        private readonly HyphenatorInterface $hyphenator,
     ) {
 
     }

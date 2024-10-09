@@ -7,7 +7,7 @@ namespace App\Repository;
 class MatchRepository implements RepositoryInterface
 {
     public function __construct(
-        private readonly \PDO $connection
+        private readonly \PDO $connection,
     ) {
 
     }
@@ -19,13 +19,13 @@ class MatchRepository implements RepositoryInterface
         }
 
         $wildcard = '(?, ?)';
-        $query = 'INSERT INTO matches (rule_fk, word_fk) VALUES '
+        $query = 'INSERT INTO matches (rule_id, word_id) VALUES '
             . str_repeat("$wildcard, ", count($matches) - 1)
             . $wildcard;
         $data = [];
         foreach ($matches as $match) {
-            $data[] = $match->getRuleFk();
-            $data[] = $match->getWordFk();
+            $data[] = $match->getRuleId();
+            $data[] = $match->getWordId();
         }
         $statement = $this->connection->prepare($query);
         $statement->execute($data);

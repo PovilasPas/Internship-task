@@ -10,11 +10,12 @@ use App\Repository\WordRepository;
 use App\Web\Request\Request;
 use App\Web\Response\JsonResponse;
 use App\Web\Response\Response;
+use App\Web\Response\StatusCode;
 
 class WordController
 {
     public function __construct(
-        private readonly WordRepository $repo
+        private readonly WordRepository $repo,
     ) {
 
     }
@@ -25,8 +26,7 @@ class WordController
         $serialized = array_map(fn (Word $item): ?array => $mapper->serialize($item), $words);
 
         return new JsonResponse(
-            [],
-            $serialized
+            body: $serialized,
         );
     }
 
@@ -38,9 +38,8 @@ class WordController
         $inserted = $this->repo->getWord($id);
         $serialized = $mapper->serialize($inserted);
         return new JsonResponse(
-            [],
-            $serialized,
-            201
+            body: $serialized,
+            code: StatusCode::CREATED,
         );
     }
 
@@ -48,9 +47,8 @@ class WordController
         $word = $this->repo->getWord($id);
         if ($word === null) {
             return new JsonResponse(
-                [],
-                ['message' => 'Not found.'],
-                404
+                body: ['message' => 'Not found.'],
+                code: StatusCode::NOT_FOUND,
             );
         }
         $mapper = new WordMapper();
@@ -59,8 +57,7 @@ class WordController
         $updated = $this->repo->getWord($id);
         $serialized = $mapper->serialize($updated);
         return new JsonResponse(
-            [],
-            $serialized
+            body: $serialized
         );
     }
 
@@ -68,16 +65,13 @@ class WordController
         $word = $this->repo->getWord($id);
         if ($word === null) {
             return new JsonResponse(
-                [],
-                ['message' => 'Not found.'],
-                404
+                body: ['message' => 'Not found.'],
+                code: StatusCode::NOT_FOUND
             );
         }
         $this->repo->deleteWord($id);
         return new JsonResponse(
-            [],
-            [],
-            204
+            code: StatusCode::NO_CONTENT
         );
     }
 }
