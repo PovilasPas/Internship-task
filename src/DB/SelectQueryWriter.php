@@ -11,6 +11,10 @@ class SelectQueryWriter implements QueryWriterInterface
         $fields = $info->getFields();
         $table = $info->getTable();
 
+        if ($table === null || empty($fields)) {
+            throw new \InvalidArgumentException('Invalid select query structure.');
+        }
+
         $select = 'SELECT ' . implode(', ', $fields) . ' FROM ' . $table;
 
         $joins = $info->getJoins();

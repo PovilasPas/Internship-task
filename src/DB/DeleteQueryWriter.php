@@ -10,6 +10,10 @@ class DeleteQueryWriter implements QueryWriterInterface
     {
         $table = $info->getTable();
 
+        if ($table === null) {
+            throw new \InvalidArgumentException('Invalid delete query structure');
+        }
+
         $delete = 'DELETE FROM ' . $table;
 
         $whereConditions = $info->getWheres();

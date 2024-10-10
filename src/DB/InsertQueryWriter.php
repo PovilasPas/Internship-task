@@ -12,6 +12,10 @@ class InsertQueryWriter implements QueryWriterInterface
         $fields = $info->getFields();
         $rows = $info->getRows();
 
+        if ($table === null || $rows === null || empty($fields)) {
+            throw new \InvalidArgumentException('Invalid insert query structure');
+        }
+
         $insert = 'INSERT INTO ' . $table . ' (' . implode(', ', $fields) . ')';
 
         $entryWildcard = '(' . rtrim(str_repeat('?, ', count($fields)), ', ') . ')';

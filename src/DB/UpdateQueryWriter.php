@@ -11,11 +11,15 @@ class UpdateQueryWriter implements QueryWriterInterface
         $table = $info->getTable();
         $fields = $info->getFields();
 
+        if ($table === null || empty($fields)) {
+            throw new \InvalidArgumentException('Invalid update query structure.');
+        }
+
         $update = 'UPDATE ' . $table . ' SET ' . implode(' = ?,', $fields) . ' = ?';
 
-        $whereConditions = $info->getWheres();
+        $wheres = $info->getWheres();
 
-        $where = empty($whereConditions) ? '' : ' WHERE ' . implode(' ', $whereConditions);
+        $where = empty($wheres) ? '' : ' WHERE ' . implode(' ', $wheres);
 
         return $update . $where;
     }
