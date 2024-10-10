@@ -11,9 +11,8 @@ class Router
 {
     private array $routes = [];
 
-    public function __construct(
-        private readonly Response $notFound,
-    ) {
+    public function __construct()
+    {
 
     }
 
@@ -22,16 +21,17 @@ class Router
         $this->routes[] = $route;
     }
 
-    public function resolveRequest(Request $request): Response
+    public function resolveRequest(Request $request, Response $notFound, Response $notAllowed): Response
     {
         foreach ($this->routes as $route) {
             $matches = $route->getMatches($request->getPath());
             if (!empty($matches)) {
                 $matches = array_slice($matches, 1);
-                return $route->handle($matches, $request);
+
+                return $route->handle($matches, $request, $notAllowed);
             }
         }
 
-        return $this->notFound;
+        return $notFound;
     }
 }

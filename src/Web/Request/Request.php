@@ -6,6 +6,12 @@ namespace App\Web\Request;
 
 class Request
 {
+    public const string GET = 'GET';
+    public const string POST = 'POST';
+    public const string PUT = 'PUT';
+    public const string PATCH = 'PATCH';
+    public const string DELETE = 'DELETE';
+
     private readonly string $method;
 
     public function __construct(

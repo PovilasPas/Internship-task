@@ -18,7 +18,7 @@ class WordMapper implements MapperInterface
         return [
             'id' => $model->getId(),
             'word' => $model->getWord(),
-            'hyphenated' => $model->getHyphenated()
+            'hyphenated' => $model->getHyphenated(),
         ];
     }
 

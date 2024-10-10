@@ -9,32 +9,31 @@ use App\Web\Response\Response;
 
 class Route
 {
-    private array $handlers = [];
+    private array $handlers;
 
     public function __construct(
         private readonly string $pattern,
-        private readonly Response $notAllowed,
         array $handlers,
     ) {
-        foreach ($handlers as $key => $handler) {
-            $this->handlers[strtoupper($key)] = $handler;
-        }
+        $this->handlers = array_change_key_case($handlers, CASE_UPPER);
     }
 
     public function getMatches(string $path): array
     {
         $matches = [];
         preg_match($this->pattern, $path, $matches);
+
         return $matches;
     }
 
-    public function handle(array $params, Request $request): Response
+    public function handle(array $parameters, Request $request, Response $notAllowed): Response
     {
         $method = $request->getMethod();
         if (!array_key_exists($method, $this->handlers)) {
-            return $this->notAllowed;
+            return $notAllowed;
         }
         $handler = $this->handlers[$method];
-        return $handler($params, $request);
+
+        return $handler($parameters, $request);
     }
 }

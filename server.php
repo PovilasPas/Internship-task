@@ -24,7 +24,7 @@ $request = new Request($parsed['path'], $data, $method);
 
 $notFound = new JsonResponse(
     body: ['message' => 'Not found.'],
-    code:StatusCode::NOT_FOUND
+    code: StatusCode::NOT_FOUND
 );
 
 $notAllowed = new JsonResponse(
@@ -32,20 +32,19 @@ $notAllowed = new JsonResponse(
     code: StatusCode::METHOD_NOT_ALLOWED
 );
 
-$router = new Router($notFound);
+$router = new Router();
 
 $router->addRoute(
     new Route(
         '/^\/api\/words$/',
-        $notAllowed,
         [
-            'GET' => function () use ($connection): Response {
+            Request::GET => function () use ($connection): Response {
                 $repo = new WordRepository($connection);
                 $controller = new WordController($repo);
 
                 return $controller->list();
             },
-            'POST' => function (array $parameters, Request $request) use ($connection): Response {
+            Request::POST => function (array $parameters, Request $request) use ($connection): Response {
                 $repo = new WordRepository($connection);
                 $controller = new WordController($repo);
 
@@ -58,16 +57,15 @@ $router->addRoute(
 $router->addRoute(
     new Route(
         '/^\/api\/words\/(\d+)$/',
-        $notAllowed,
         [
-            'PUT' => function (array $parameters, Request $request) use ($connection): Response {
+            Request::PUT => function (array $parameters, Request $request) use ($connection): Response {
                 $id = (int) $parameters[0];
                 $repo = new WordRepository($connection);
                 $controller = new WordController($repo);
 
                 return $controller->update($id, $request);
             },
-            'DELETE' => function (array $parameters) use ($connection): Response {
+            Request::DELETE => function (array $parameters) use ($connection): Response {
                 $id = (int) $parameters[0];
                 $repo = new WordRepository($connection);
                 $controller = new WordController($repo);
@@ -78,6 +76,6 @@ $router->addRoute(
     )
 );
 
-$response = $router->resolveRequest($request);
+$response = $router->resolveRequest($request, $notFound, $notAllowed);
 
 $response->render();

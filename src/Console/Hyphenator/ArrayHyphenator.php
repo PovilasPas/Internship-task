@@ -13,7 +13,7 @@ class ArrayHyphenator implements HyphenatorInterface
 
     public function __construct(array $rules)
     {
-        $this->rules = array_map(fn (Rule $item): HyphenationRule => new HyphenationRule($item->getRule()), $rules);
+        $this->rules = $rules;
     }
 
     public function hyphenate(string $word): HyphenationResult

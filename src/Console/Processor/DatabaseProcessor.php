@@ -20,8 +20,7 @@ class DatabaseProcessor
         private readonly MatchRepository $matchRepository,
         private readonly \PDO $connection,
         private readonly HyphenatorInterface $hyphenator,
-    )
-    {
+    ) {
 
     }
 

@@ -50,7 +50,7 @@ class DatabaseHyphenationExecutor implements ExecutorInterface
 
         $result = $this->processor->process([$word])[0];
 
-        IOUtils::printLinesToCLI(
+        IOUtils::printLinesToCli(
             [
                 'Hyphenated word:',
                 $result->getWord(),

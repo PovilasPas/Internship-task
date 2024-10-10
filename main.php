@@ -12,11 +12,14 @@ use App\Console\Executor\FileHyphenationExecutor;
 use App\Console\Executor\HyphenateNotHyphenatedExecutor;
 use App\Console\Executor\LoaderExecutor;
 use App\Console\Hyphenator\ArrayHyphenator;
+use App\Console\Hyphenator\HyphenationRule;
 use App\Console\Loader\RuleFileLoader;
 use App\Console\Loader\WordFileLoader;
 use App\Console\Processor\DatabaseProcessor;
 use App\DB\ConnectionManager;
+use App\IOUtils;
 use App\Logger\SimpleLogger;
+use App\Model\Rule;
 use App\Repository\MatchRepository;
 use App\Repository\RuleRepository;
 use App\Repository\WordRepository;
@@ -35,14 +38,25 @@ class Main
             $ruleRepository = new RuleRepository($connection);
             $matchRepository = new MatchRepository($connection);
 
-            $hyphenator = new ArrayHyphenator($ruleRepository->getRules());
+            $databaseRules = array_map(
+                fn (Rule $item): HyphenationRule => new HyphenationRule($item->getRule()),
+                $ruleRepository->getRules(),
+            );
+            $databaseHyphenator = new ArrayHyphenator($databaseRules);
             $processor = new DatabaseProcessor(
                 $wordRepository,
                 $ruleRepository,
                 $matchRepository,
                 $connection,
-                $hyphenator
+                $databaseHyphenator
             );
+
+            $fileRules = array_map(
+                fn (String $item): HyphenationRule => new HyphenationRule($item),
+                IOUtils::readFile(self::RULE_FILE),
+            );
+            $fileHyphenator = new ArrayHyphenator($fileRules);
+
 
             $wordFileLoader = new LoaderExecutor(new WordFileLoader($wordRepository));
             $ruleFileLoader = new LoaderExecutor(new RuleFileLoader($ruleRepository));
@@ -77,7 +91,7 @@ class Main
 
             if(strlen($word) > 0) {
                 $dbSourceExecutor = new DatabaseHyphenationExecutor($wordRepository, $ruleRepository, $processor, $word);
-                $fileSourceExecutor = new FileHyphenationExecutor(self::RULE_FILE, $hyphenator, $word);
+                $fileSourceExecutor = new FileHyphenationExecutor($fileHyphenator, $word);
                 $sourceMenu = new Menu(
                     [
                         new MenuAction('Use database for hyphenation.', $dbSourceExecutor),
