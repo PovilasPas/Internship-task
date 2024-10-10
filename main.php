@@ -18,6 +18,7 @@ use App\Console\Loader\WordFileLoader;
 use App\Console\Processor\DatabaseProcessor;
 use App\DB\ConnectionManager;
 use App\IOUtils;
+use App\DB\QueryBuilder;
 use App\Logger\SimpleLogger;
 use App\Model\Rule;
 use App\Repository\MatchRepository;
@@ -33,11 +34,11 @@ class Main
     {
         $logger = new SimpleLogger(self::LOGS_DIR);
         try {
+            $builder = new QueryBuilder();
             $connection = ConnectionManager::getConnection();
-
-            $wordRepository = new WordRepository($connection);
-            $ruleRepository = new RuleRepository($connection);
-            $matchRepository = new MatchRepository($connection);
+            $wordRepository = new WordRepository($connection, $builder);
+            $ruleRepository = new RuleRepository($connection, $builder);
+            $matchRepository = new MatchRepository($connection, $builder);
 
             $databaseRules = array_map(
                 fn (Rule $item): HyphenationRule => new HyphenationRule($item->getRule()),

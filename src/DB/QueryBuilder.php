@@ -6,144 +6,77 @@ namespace App\DB;
 
 class QueryBuilder
 {
-    private QueryType $action;
+    private ?QueryType $type;
 
-    private string $table;
+    private QueryInfo $info;
 
-    private array $fields;
-
-    private array $values;
-
-    private array $joins = [];
-
-    private array $whereConditions = [];
-
-    private array $whereParameters = [];
-
-    public function __construct(
-        private readonly \PDO $connection
-    ) {
-
+    public function __construct()
+    {
+        $this->type = null;
+        $this->info = new QueryInfo();
     }
 
-    public function select(array $fields = ['*']): QueryBuilder
+    public function select(string $table, array $fields = ['*']): QueryBuilder
     {
-        $this->action = QueryType::SELECT;
-        $this->fields = $fields;
+        $this->type = QueryType::SELECT;
+        $this->info->setTable($table);
+        $this->info->setFields($fields);
+
         return $this;
     }
 
-    public function insert(array $fields, array $values): QueryBuilder
+    public function insert(string $table, array $fields, int $rows = 1): QueryBuilder
     {
-        $this->action = QueryType::INSERT;
-        $this->fields = $fields;
-        $this->values = $values;
+        $this->type = QueryType::INSERT;
+        $this->info->setTable($table);
+        $this->info->setFields($fields);
+        $this->info->setRows($rows);
+
         return $this;
     }
 
-    public function update(array $fields, array $values): QueryBuilder
+    public function update(string $table, array $fields): QueryBuilder
     {
-        $this->action = QueryType::UPDATE;
-        $this->fields = $fields;
-        $this->values = $values;
+        $this->type = QueryType::UPDATE;
+        $this->info->setTable($table);
+        $this->info->setFields($fields);
+
         return $this;
     }
 
-    public function delete(): QueryBuilder
+    public function delete(string $table): QueryBuilder
     {
-        $this->action = QueryType::DELETE;
+        $this->type = QueryType::DELETE;
+        $this->info->setTable($table);
+
         return $this;
     }
 
-    public function setTable(string $table): QueryBuilder
+    public function where(string $condition, ?OperatorType $operator = null): QueryBuilder
     {
-        $this->table = $table;
-        return $this;
-    }
+        $where = $operator ? "$operator->value $condition" : $condition;
+        $this->info->addWhere($where);
 
-    public function where(string $condition, array $parameters, ?OperatorType $operator = null): QueryBuilder
-    {
-        $this->whereConditions[] =  $operator ? "$operator->value $condition" : $condition;
-        $this->whereParameters[] = $parameters;
         return $this;
     }
 
     public function join(string $table, string $condition, JoinType $type = JoinType::INNER): QueryBuilder
     {
-        $this->joins[] = "$type->value $table ON $condition";
+        $join = "$type->value $table ON $condition";
+        $this->info->addJoin($join);
+
         return $this;
     }
 
-    public function get(): array
+    public function get(): string
     {
-        $query = '';
-        $parameters = [];
-        switch ($this->action) {
-            case QueryType::SELECT:
-                $query .= 'SELECT ' . implode(', ', $this->fields);
-                $query .= ' FROM ' . $this->table;
-                if (!empty($this->joins)) {
-                    $query .= ' ' . implode(' ', $this->joins);
-                }
-                if (!empty($this->whereConditions)) {
-                    $query .= ' WHERE ' . implode(' ', $this->whereConditions);
-                    $parameters = array_reduce(
-                        $this->whereParameters,
-                        fn (array $acc, array $parameters) => array_merge($acc, $parameters),
-                        []
-                    );
-                }
+        $factory = new QueryWriterFactory();
+        $writer = $factory->createWriter($this->type);
+        $query = $writer->writeQuery($this->info);
 
-                break;
+        $this->type = null;
+        $this->info->reset();
 
-            case QueryType::INSERT:
-                $query .= 'INSERT INTO ' . $this->table;
-                $query .= ' (' . implode(', ', $this->fields) . ')';
-                $valuesWildcard = '(' . rtrim(str_repeat("?, ", count($this->fields)), ', ') . ')';
-                $rowsWildcard = rtrim(str_repeat("$valuesWildcard, ", count($this->values)), ', ');
-                $query .= ' VALUES ' . $rowsWildcard;
-                $parameters = array_reduce(
-                    $this->values,
-                    fn (array $acc, array $parameters) => array_merge($acc, $parameters),
-                    []
-                );
-
-                break;
-
-            case QueryType::UPDATE:
-                $query .= 'UPDATE ' . $this->table;
-                $query .= ' SET ' . implode(' = ?, ', $this->fields) . ' = ?';
-                $parameters = $this->values;
-                if (!empty($this->whereConditions)) {
-                    $query .= ' WHERE ' . implode(' ', $this->whereConditions);
-                    $reduced = array_reduce(
-                        $this->whereParameters,
-                        fn (array $acc, array $parameters) => array_merge($acc, $parameters),
-                        []
-                    );
-                    $parameters = array_merge($parameters, $reduced);
-                }
-
-                break;
-
-            case QueryType::DELETE:
-                $query .= 'DELETE FROM ' . $this->table;
-                if (!empty($this->whereConditions)) {
-                    $query .= ' WHERE ' . implode(' ', $this->whereConditions);
-                    $parameters = array_reduce(
-                        $this->whereParameters,
-                        fn (array $acc, array $parameters) => array_merge($acc, $parameters),
-                        []
-                    );
-                }
-
-                break;
-        }
-
-        $statement = $this->connection->prepare($query);
-        $statement->execute($parameters);
-        $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
-
-        return $data;
+        return $query;
     }
 }

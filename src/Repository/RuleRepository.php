@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\IOUtils;
+use App\DB\QueryBuilder;
 use App\Model\Rule;
 use App\Model\Word;
 
@@ -12,17 +13,18 @@ class RuleRepository implements RepositoryInterface
 {
     public function __construct(
         private readonly \PDO $connection,
+        private readonly QueryBuilder $builder,
     ) {
 
     }
 
     public function getRulesMatchingWord(Word $word): array
     {
-        $query = '
-            SELECT rules.id as id, rules.rule as rule FROM matches
-            INNER JOIN rules ON rules.id = matches.rule_id
-            WHERE matches.word_id = ?
-        ';
+        $query = $this->builder
+            ->select('matches', ['rules.id as id', 'rules.rule as rule'])
+            ->join('rules', 'rules.id = matches.rule_id')
+            ->where('matches.word_id = ?')
+            ->get();
         $statement = $this->connection->prepare($query);
         $statement->execute([$word->getId()]);
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -33,7 +35,7 @@ class RuleRepository implements RepositoryInterface
 
     public function getRules(): array
     {
-        $query = 'SELECT * FROM rules';
+        $query = $this->builder->select('rules')->get();
         $statement = $this->connection->prepare($query);
         $statement->execute();
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -47,7 +49,8 @@ class RuleRepository implements RepositoryInterface
         if (count($patterns) <= 0) {
             return [];
         }
-        $query = 'SELECT * FROM rules WHERE rule IN (' . str_repeat('?,', count($patterns) - 1) . '?)';
+        $wildcard = rtrim(str_repeat('?, ', count($patterns)), ', ');
+        $query = $this->builder->select('rules')->where("rule IN ($wildcard)")->get();
         $statement = $this->connection->prepare($query);
         $statement->execute($patterns);
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -59,7 +62,7 @@ class RuleRepository implements RepositoryInterface
     public function loadRulesFromFile(string $filePath): void
     {
         $this->connection->beginTransaction();
-        $query = 'DELETE FROM rules';
+        $query = $this->builder->delete('rules')->get();
         $this->connection->prepare($query)->execute();
 
         $rules = IOUtils::readFile($filePath);
@@ -67,8 +70,8 @@ class RuleRepository implements RepositoryInterface
             . rtrim(str_repeat('(?), ', count($rules)), ', ');
         $this->connection->prepare($query)->execute($rules);
 
-        $query = 'UPDATE words SET hyphenated = NULL';
-        $this->connection->prepare($query)->execute();
+        $query = $this->builder->update('words', ['hyphenated'])->get();
+        $this->connection->prepare($query)->execute([null]);
         $this->connection->commit();
     }
 }

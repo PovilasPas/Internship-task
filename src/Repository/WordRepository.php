@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\IOUtils;
+use App\DB\QueryBuilder;
 use App\Mapper\WordMapper;
 use App\Model\Word;
 
@@ -12,13 +13,14 @@ class WordRepository implements RepositoryInterface
 {
     public function __construct(
         private readonly \PDO $connection,
+        private readonly QueryBuilder $builder,
     ) {
 
     }
 
     public function getWords(): array
     {
-        $query = 'SELECT * FROM words';
+        $query = $this->builder->select('words')->get();
         $statement = $this->connection->prepare($query);
         $statement->execute();
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -29,7 +31,7 @@ class WordRepository implements RepositoryInterface
 
     public function getWord(int $id): ?Word
     {
-        $query = 'SELECT * FROM words WHERE id = ?';
+        $query = $this->builder->select('words')->where('id = ?')->get();
         $statement = $this->connection->prepare($query);
         $statement->execute([$id]);
         $data = $statement->fetch(\PDO::FETCH_ASSOC);
@@ -39,28 +41,28 @@ class WordRepository implements RepositoryInterface
 
     public function insertWord(Word $word): void
     {
-        $query = 'INSERT INTO words (word) VALUES (?)';
+        $query = $this->builder->insert('words', ['word'])->get();
         $statement = $this->connection->prepare($query);
         $statement->execute([$word->getWord()]);
     }
 
     public function updateWord(int $id, Word $word): void
     {
-        $query = 'UPDATE words SET word = ?, hyphenated = ? WHERE id = ?';
+        $query = $this->builder->update('words', ['word', 'hyphenated'])->where('id = ?')->get();
         $statement = $this->connection->prepare($query);
         $statement->execute([$word->getWord(), $word->getHyphenated(), $id]);
     }
 
     public function deleteWord(int $id): void
     {
-        $query = 'DELETE FROM words WHERE id = ?';
+        $query = $this->builder->delete('words')->where('id = ?')->get();
         $statement = $this->connection->prepare($query);
         $statement->execute([$id]);
     }
 
     public function getWordByString(string $word): ?Word
     {
-        $query = 'SELECT * FROM words WHERE word LIKE ?';
+        $query = $this->builder->select('words')->where('word LIKE ?')->get();
         $statement = $this->connection->prepare($query);
         $statement->execute([$word]);
         $data = $statement->fetch(\PDO::FETCH_ASSOC);
@@ -85,7 +87,7 @@ class WordRepository implements RepositoryInterface
 
     public function getWordsWithoutHyphenation(): array
     {
-        $query = 'SELECT * FROM words WHERE hyphenated IS NULL';
+        $query = $this->builder->select('words')->where('hyphenated IS NULL')->get();
         $statement = $this->connection->prepare($query);
         $statement->execute();
         $data = $statement->fetchAll(\PDO::FETCH_ASSOC);
@@ -96,7 +98,10 @@ class WordRepository implements RepositoryInterface
 
     public function hasWordsWithoutHyphenation(): bool
     {
-        $query = 'SELECT COUNT(*) as `count` FROM words WHERE hyphenated IS NULL';
+        $query = $this->builder
+            ->select('words', ['COUNT(*) as `count`'])
+            ->where('hyphenated IS NULL')
+            ->get();
         $statement = $this->connection->prepare($query);
         $statement->execute();
         $data = $statement->fetch(\PDO::FETCH_ASSOC);
