@@ -10,6 +10,8 @@ class QueryInfo
 
     private ?int $rows = null;
 
+    private bool $ignore = false;
+
     private array $fields = [];
 
     private array $joins = [];
@@ -44,6 +46,16 @@ class QueryInfo
     public function setRows(int $rows): void
     {
         $this->rows = $rows;
+    }
+
+    public function getIgnore(): bool
+    {
+        return $this->ignore;
+    }
+
+    public function setIgnore(bool $ignore): void
+    {
+        $this->ignore = $ignore;
     }
 
     public function getJoins(): array

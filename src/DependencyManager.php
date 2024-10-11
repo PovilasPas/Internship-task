@@ -8,15 +8,19 @@ class DependencyManager
 {
     private array $dependencies = [];
 
-    public function register(string $id, callable $callable): void
+    public function register(string $id, callable $resolver): void
     {
-        $this->dependencies[$id] = $callable;
+        $this->dependencies[$id] = $resolver;
     }
 
-    public function resolve(string $id)
+    public function resolve(string $id): mixed
     {
         if (!array_key_exists($id, $this->dependencies)) {
-            throw new \InvalidArgumentException("Cannot find a way to resolve dependency '$id'");
+            throw new \InvalidArgumentException("Could not resolve dependency named \"$id\"");
         }
+
+        $resolver = $this->dependencies[$id];
+
+        return $resolver($this);
     }
 }

@@ -10,8 +10,9 @@ class QueryBuilder
 
     private QueryInfo $info;
 
-    public function __construct()
-    {
+    public function __construct(
+        private readonly QueryWriterFactory $factory,
+    ) {
         $this->type = null;
         $this->info = new QueryInfo();
     }
@@ -25,12 +26,13 @@ class QueryBuilder
         return $this;
     }
 
-    public function insert(string $table, array $fields, int $rows = 1): QueryBuilder
+    public function insert(string $table, array $fields, int $rows = 1, bool $ignore = false): QueryBuilder
     {
         $this->type = QueryType::INSERT;
         $this->info->setTable($table);
         $this->info->setFields($fields);
         $this->info->setRows($rows);
+        $this->info->setIgnore($ignore);
 
         return $this;
     }
@@ -70,8 +72,7 @@ class QueryBuilder
 
     public function get(): string
     {
-        $factory = new QueryWriterFactory();
-        $writer = $factory->createWriter($this->type);
+        $writer = $this->factory->createWriter($this->type);
         $query = $writer->writeQuery($this->info);
 
         $this->type = null;

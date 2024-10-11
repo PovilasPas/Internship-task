@@ -19,6 +19,8 @@ use App\Console\Processor\DatabaseProcessor;
 use App\DB\ConnectionManager;
 use App\IOUtils;
 use App\DB\QueryBuilder;
+use App\DB\QueryWriterFactory;
+use App\DependencyManager;
 use App\Logger\SimpleLogger;
 use App\Model\Rule;
 use App\Repository\MatchRepository;
@@ -34,8 +36,9 @@ class Main
     {
         $logger = new SimpleLogger(self::LOGS_DIR);
         try {
-            $builder = new QueryBuilder();
             $connection = ConnectionManager::getConnection();
+            $factory = new QueryWriterFactory();
+            $builder = new QueryBuilder($factory);
             $wordRepository = new WordRepository($connection, $builder);
             $ruleRepository = new RuleRepository($connection, $builder);
             $matchRepository = new MatchRepository($connection, $builder);

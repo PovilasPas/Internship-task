@@ -16,7 +16,9 @@ class InsertQueryWriter implements QueryWriterInterface
             throw new \InvalidArgumentException('Invalid insert query structure');
         }
 
-        $insert = 'INSERT INTO ' . $table . ' (' . implode(', ', $fields) . ')';
+        $ignore = $info->getIgnore();
+
+        $insert = 'INSERT ' . ($ignore ? 'IGNORE ' : '') . 'INTO ' . $table . ' (' . implode(', ', $fields) . ')';
 
         $entryWildcard = '(' . rtrim(str_repeat('?, ', count($fields)), ', ') . ')';
         $listWildcard = rtrim(str_repeat("$entryWildcard, ", $rows), ', ');
