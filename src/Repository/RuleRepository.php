@@ -66,8 +66,7 @@ class RuleRepository implements RepositoryInterface
         $this->connection->prepare($query)->execute();
 
         $rules = IOUtils::readFile($filePath);
-        $query = 'INSERT IGNORE INTO rules (rule) VALUES '
-            . rtrim(str_repeat('(?), ', count($rules)), ', ');
+        $query = $this->builder->insert('rules', ['rule'], count($rules), true)->get();
         $this->connection->prepare($query)->execute($rules);
 
         $query = $this->builder->update('words', ['hyphenated'])->get();

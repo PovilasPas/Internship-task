@@ -80,8 +80,7 @@ class WordRepository implements RepositoryInterface
     public function loadWordsFromFile(string $filePath): void
     {
         $words = IOUtils::ReadFile($filePath);
-        $query = 'INSERT IGNORE INTO words (word) VALUES '
-            . rtrim(str_repeat('(?), ', count($words)), ', ');
+        $query = $this->builder->insert('words', ['word'], count($words), true)->get();
         $this->connection->prepare($query)->execute($words);
     }
 

@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\DB\ConnectionManager;
+use App\DB\QueryBuilder;
+use App\DB\QueryWriterFactory;
 use App\Repository\WordRepository;
 use App\Web\Controller\WordController;
 use App\Web\Request\Request;
@@ -34,18 +36,21 @@ $notAllowed = new JsonResponse(
 
 $router = new Router();
 
+$factory = new QueryWriterFactory();
+$builder = new QueryBuilder($factory);
+
 $router->addRoute(
     new Route(
         '/^\/api\/words$/',
         [
-            Request::GET => function () use ($connection): Response {
-                $repo = new WordRepository($connection);
+            Request::GET => function () use ($connection, $builder): Response {
+                $repo = new WordRepository($connection, $builder);
                 $controller = new WordController($repo);
 
                 return $controller->list();
             },
-            Request::POST => function (array $parameters, Request $request) use ($connection): Response {
-                $repo = new WordRepository($connection);
+            Request::POST => function (array $parameters, Request $request) use ($connection, $builder): Response {
+                $repo = new WordRepository($connection, $builder);
                 $controller = new WordController($repo);
 
                 return $controller->create($request);
@@ -58,16 +63,16 @@ $router->addRoute(
     new Route(
         '/^\/api\/words\/(\d+)$/',
         [
-            Request::PUT => function (array $parameters, Request $request) use ($connection): Response {
+            Request::PUT => function (array $parameters, Request $request) use ($connection, $builder): Response {
                 $id = (int) $parameters[0];
-                $repo = new WordRepository($connection);
+                $repo = new WordRepository($connection, $builder);
                 $controller = new WordController($repo);
 
                 return $controller->update($id, $request);
             },
-            Request::DELETE => function (array $parameters) use ($connection): Response {
+            Request::DELETE => function (array $parameters) use ($connection, $builder): Response {
                 $id = (int) $parameters[0];
-                $repo = new WordRepository($connection);
+                $repo = new WordRepository($connection, $builder);
                 $controller = new WordController($repo);
 
                 return $controller->delete($id);

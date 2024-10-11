@@ -35,5 +35,7 @@ class FileHyphenationExecutor implements ExecutorInterface
                 $hyphenated->getWord(),
             ]
         );
+
+        $this->word = null;
     }
 }
