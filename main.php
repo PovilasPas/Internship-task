@@ -20,21 +20,18 @@ use App\DB\ConnectionManager;
 use App\IOUtils;
 use App\DB\QueryBuilder;
 use App\DB\QueryWriterFactory;
-use App\DependencyManager;
 use App\Logger\SimpleLogger;
 use App\Model\Rule;
+use App\Paths;
 use App\Repository\MatchRepository;
 use App\Repository\RuleRepository;
 use App\Repository\WordRepository;
 
 class Main
 {
-    private const string RULE_FILE = 'var/rules.txt';
-    private const string LOGS_DIR = 'logs';
-
     public static function main(): void
     {
-        $logger = new SimpleLogger(self::LOGS_DIR);
+        $logger = new SimpleLogger(Paths::LOGS_DIR);
         try {
             $connection = ConnectionManager::getConnection();
             $factory = new QueryWriterFactory();
@@ -95,8 +92,10 @@ class Main
             $word = trim(readline('Enter a word to be hyphenated (leave empty to skip this step): '));
 
             if(strlen($word) > 0) {
-                $dbSourceExecutor = new DatabaseHyphenationExecutor($wordRepository, $ruleRepository, $processor, $word);
-                $fileSourceExecutor = new FileHyphenationExecutor($fileHyphenator, $word);
+                $dbSourceExecutor = new DatabaseHyphenationExecutor($wordRepository, $ruleRepository, $processor);
+                $dbSourceExecutor->setWord($word);
+                $fileSourceExecutor = new FileHyphenationExecutor($fileHyphenator);
+                $fileSourceExecutor->setWord($word);
                 $sourceMenu = new Menu(
                     [
                         new MenuAction('Use database for hyphenation.', $dbSourceExecutor),
