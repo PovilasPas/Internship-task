@@ -15,6 +15,7 @@ class IOUtils
             $lines[] = $line;
         }
         unset($file);
+
         return $lines;
     }
 
@@ -31,6 +32,13 @@ class IOUtils
         $file = new \SplFileObject($filePath, 'a');
         foreach ($lines as $line) {
             $file->fwrite($line . PHP_EOL);
+        }
+    }
+
+    public static function printLinesToCli(array $lines): void
+    {
+        foreach ($lines as $line) {
+            echo $line . PHP_EOL;
         }
     }
 }

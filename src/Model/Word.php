@@ -6,8 +6,11 @@ namespace App\Model;
 
 class Word implements ModelInterface
 {
-    public function __construct(private string $word, private ?int $id = null, private ?string $hyphenated = null)
-    {
+    public function __construct(
+        private string $word,
+        private ?int $id = null,
+        private ?string $hyphenated = null,
+    ) {
 
     }
 
