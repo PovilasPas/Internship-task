@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace App\Console\Hyphenator;
 
-use App\Model\Rule;
 
 class RegexHyphenator implements HyphenatorInterface
 {
-    private readonly array $rules;
+    /**
+     * @param string[] $rules
+     */
+    public function __construct(
+        private readonly array $rules,
+    ) {
 
-    public function __construct(array $rules)
-    {
-        $this->rules = $rules;
     }
 
     public function hyphenate(string $word): HyphenationResult
