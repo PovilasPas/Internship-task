@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Database;
 
-use http\Exception\InvalidArgumentException;
-
 class QueryWriterFactory
 {
-    public function createWriter(QueryType $type): QueryWriterInterface
+    public function createWriter(?QueryType $type): QueryWriterInterface
     {
         switch ($type) {
             case QueryType::SELECT:
@@ -20,7 +18,7 @@ class QueryWriterFactory
             case QueryType::DELETE:
                 return new DeleteQueryWriter();
             default:
-                throw new InvalidArgumentException('Unsupported query type: ' . $type->value);
+                throw new \InvalidArgumentException('Unsupported query type: ' . $type->value);
         }
     }
 }
