@@ -38,13 +38,6 @@ class WordRepository implements RepositoryInterface
         return $data !== false ? new Word($data['word'], $data['id'], $data['hyphenated']) : null;
     }
 
-    public function insertWord(Word $word): void
-    {
-        $query = $this->builder->insert('words', ['word'])->get();
-        $statement = $this->connection->prepare($query);
-        $statement->execute([$word->getWord()]);
-    }
-
     public function insertWords(array $words): void
     {
         if (empty($words)) {
@@ -57,6 +50,13 @@ class WordRepository implements RepositoryInterface
         }
         $statement = $this->connection->prepare($query);
         $statement->execute($data);
+    }
+
+    public function insertWord(Word $word): void
+    {
+        $query = $this->builder->insert('words', ['word'])->get();
+        $statement = $this->connection->prepare($query);
+        $statement->execute([$word->getWord()]);
     }
 
     public function updateWord(int $id, Word $word): void

@@ -7,7 +7,7 @@ namespace App\Web\Response;
 class JsonResponse extends Response
 {
 
-    public function __construct(array $headers = [], array $body = [], StatusCode $code = StatusCode::OK)
+    public function __construct(array $headers = [], ?array $body = null, StatusCode $code = StatusCode::OK)
     {
         parent::__construct($headers, $body, $code);
         $this->headers[] = 'Content-type: application/json';
@@ -21,8 +21,10 @@ class JsonResponse extends Response
 
         http_response_code($this->code->value);
 
-        if (!empty($this->body)) {
+        if ($this->body !== null) {
             echo json_encode($this->body);
+        } else {
+            echo '""';
         }
     }
 }
