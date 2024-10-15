@@ -243,4 +243,31 @@ class QueryBuilderTest extends TestCase
 
         self::$builder->get();
     }
+
+    public function testInvalidSelectQuery(): void
+    {
+        $table = 'words';
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        self::$builder->select($table, [])->get();
+    }
+
+    public function testInvalidInsertQuery(): void
+    {
+        $table = 'words';
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        self::$builder->insert($table, [])->get();
+    }
+
+    public function testInvalidUpdateQuery(): void
+    {
+        $table = 'words';
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        self::$builder->update($table, [])->get();
+    }
 }

@@ -46,7 +46,7 @@ class LineProcessorTest extends TestCase
     public function testLineProcessing(array $lines): void
     {
         $hyphenator = $this->createMock(HyphenatorInterface::class);
-        $hyphenator
+        $hyphenator     
             ->expects($this->any())
             ->method('hyphenate')
             ->willReturnCallback(

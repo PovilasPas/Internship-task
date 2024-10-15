@@ -9,10 +9,10 @@ use App\Model\Word;
 
 class WordMapper implements MapperInterface
 {
-    public function serialize(ModelInterface $model): ?array
+    public function serialize(ModelInterface $model): array
     {
         if (!$model instanceof Word) {
-            return null;
+            throw new \InvalidArgumentException('Model must be instance of Word');
         }
 
         return [

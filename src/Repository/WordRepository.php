@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\IOUtils;
-use App\Database\QueryBuilder;
-use App\Mapper\WordMapper;
+use App\DB\QueryBuilder;
 use App\Model\Word;
 
 class WordRepository implements RepositoryInterface
@@ -44,6 +43,20 @@ class WordRepository implements RepositoryInterface
         $query = $this->builder->insert('words', ['word'])->get();
         $statement = $this->connection->prepare($query);
         $statement->execute([$word->getWord()]);
+    }
+
+    public function insertWords(array $words): void
+    {
+        if (empty($words)) {
+            return;
+        }
+        $query = $this->builder->insert('words', ['word'], count($words))->get();
+        $data = [];
+        foreach ($words as $word) {
+            $data[] = $word->getWord();
+        }
+        $statement = $this->connection->prepare($query);
+        $statement->execute($data);
     }
 
     public function updateWord(int $id, Word $word): void
