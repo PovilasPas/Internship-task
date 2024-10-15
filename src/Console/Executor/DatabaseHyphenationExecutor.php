@@ -14,7 +14,7 @@ use App\Repository\WordRepository;
 
 class DatabaseHyphenationExecutor implements ExecutorInterface
 {
-    private ?string $word = null;
+    private string $word;
 
     public function __construct(
         private readonly WordRepository $wordRepository,
@@ -31,8 +31,8 @@ class DatabaseHyphenationExecutor implements ExecutorInterface
 
     public function execute(): void
     {
-        if ($this->word === null) {
-            throw new \BadMethodCallException('Word should be set before calling execute() method');
+        if (!isset($this->word)) {
+            throw new \LogicException('Word should be set before calling execute() method');
         }
 
         $word = $this->wordRepository->getWordByString($this->word);
@@ -48,7 +48,7 @@ class DatabaseHyphenationExecutor implements ExecutorInterface
                     ...array_map(fn (Rule $rule): string => $rule->getRule(), $matchedRules),
                 ]
             );
-            $this->word = null;
+            unset($this->word);
 
             return;
         }
@@ -70,6 +70,6 @@ class DatabaseHyphenationExecutor implements ExecutorInterface
             ]
         );
 
-        $this->word = null;
+        unset($this->word);
     }
 }

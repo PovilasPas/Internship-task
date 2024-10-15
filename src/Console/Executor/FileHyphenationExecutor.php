@@ -9,7 +9,7 @@ use App\IOUtils;
 
 class FileHyphenationExecutor implements ExecutorInterface
 {
-    private ?string $word;
+    private string $word;
 
     public function __construct(
         private readonly HyphenatorInterface $hyphenator,
@@ -24,8 +24,8 @@ class FileHyphenationExecutor implements ExecutorInterface
 
     public function execute(): void
     {
-        if ($this->word === null) {
-            throw new \BadMethodCallException('Word should be set before calling execute() method');
+        if (!isset($this->word)) {
+            throw new \LogicException('Word should be set before calling execute() method');
         }
 
         $hyphenated = $this->hyphenator->hyphenate($this->word);
@@ -36,6 +36,6 @@ class FileHyphenationExecutor implements ExecutorInterface
             ]
         );
 
-        $this->word = null;
+        unset($this->word);
     }
 }

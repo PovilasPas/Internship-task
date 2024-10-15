@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\DB;
+namespace App\Database;
 
 enum OperatorType: string
 {

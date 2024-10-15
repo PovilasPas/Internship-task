@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\DB;
+namespace App\Database;
 
 class QueryBuilder
 {
@@ -20,6 +20,7 @@ class QueryBuilder
     public function select(string $table, array $fields = ['*']): QueryBuilder
     {
         $this->type = QueryType::SELECT;
+
         $this->info->setTable($table);
         $this->info->setFields($fields);
 
@@ -29,6 +30,7 @@ class QueryBuilder
     public function insert(string $table, array $fields, int $rows = 1, bool $ignore = false): QueryBuilder
     {
         $this->type = QueryType::INSERT;
+
         $this->info->setTable($table);
         $this->info->setFields($fields);
         $this->info->setRows($rows);
@@ -40,6 +42,7 @@ class QueryBuilder
     public function update(string $table, array $fields): QueryBuilder
     {
         $this->type = QueryType::UPDATE;
+
         $this->info->setTable($table);
         $this->info->setFields($fields);
 
@@ -49,6 +52,7 @@ class QueryBuilder
     public function delete(string $table): QueryBuilder
     {
         $this->type = QueryType::DELETE;
+
         $this->info->setTable($table);
 
         return $this;
@@ -73,7 +77,7 @@ class QueryBuilder
     public function get(): string
     {
         $writer = $this->factory->createWriter($this->type);
-        $query = $writer->writeQuery($this->info);
+        $query = $writer->write($this->info);
 
         $this->type = null;
         $this->info->reset();

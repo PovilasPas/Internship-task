@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\DB\QueryBuilder;
+use App\Database\QueryBuilder;
 
 class MatchRepository implements RepositoryInterface
 {

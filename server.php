@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-use App\DB\ConnectionManager;
-use App\DB\QueryBuilder;
-use App\DB\QueryWriterFactory;
+use App\Database\ConnectionManager;
+use App\Database\QueryBuilder;
+use App\Database\QueryWriterFactory;
+use App\Dependency\DependencyLoader;
 use App\Repository\WordRepository;
 use App\Web\Controller\WordController;
 use App\Web\Request\Request;
@@ -34,10 +35,11 @@ $notAllowed = new JsonResponse(
     code: StatusCode::METHOD_NOT_ALLOWED
 );
 
-$router = new Router();
+$manager = DependencyLoader::load();
 
-$factory = new QueryWriterFactory();
-$builder = new QueryBuilder($factory);
+$router = $manager->resolve('Router');
+
+$builder = $manager->resolve('QueryBuilder');
 
 $router->addRoute(
     new Route(

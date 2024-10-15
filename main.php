@@ -12,7 +12,7 @@ class Main
 {
     public static function main(): void
     {
-        $manager = DependencyLoader::loadDependencies();
+        $manager = DependencyLoader::load();
         $logger = $manager->resolve('Logger');
         try {
             $wordFileLoader = $manager->resolve('WordLoaderExecutor');

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\IOUtils;
-use App\DB\QueryBuilder;
+use App\Database\QueryBuilder;
 use App\Mapper\WordMapper;
 use App\Model\Word;
 

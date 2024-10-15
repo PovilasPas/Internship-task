@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\DB;
+namespace App\Database;
 
 class InsertQueryWriter implements QueryWriterInterface
 {
-    public function writeQuery(QueryInfo $info): string
+    public function write(QueryInfo $info): string
     {
         $table = $info->getTable();
         $fields = $info->getFields();
