@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Test\APITests;
 
-use App\DB\ConnectionManager;
-use App\DB\QueryBuilder;
-use App\DB\QueryWriterFactory;
+use App\Database\ConnectionManager;
+use App\Database\QueryBuilder;
+use App\Database\QueryWriterFactory;
 use App\Mapper\WordMapper;
 use App\Model\Word;
 use App\Repository\WordRepository;

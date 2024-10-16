@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Test\DB;
 
-use App\DB\JoinType;
-use App\DB\OperatorType;
-use App\DB\QueryBuilder;
-use App\DB\QueryWriterFactory;
+use App\Database\JoinType;
+use App\Database\OperatorType;
+use App\Database\QueryBuilder;
+use App\Database\QueryWriterFactory;
 use PHPUnit\Framework\TestCase;
 
 class QueryBuilderTest extends TestCase

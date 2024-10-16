@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Test\Repository;
 
-use App\DB\QueryBuilder;
+use App\Database\QueryBuilder;
 use App\Model\PatternMatch;
 use App\Repository\MatchRepository;
 use PHPUnit\Framework\TestCase;
