@@ -2,13 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link rel="stylesheet" href="../styles.css">
+    <title>Internship task</title>
+    <link rel="stylesheet" href="../Styles.css">
 </head>
 <body>
-    <div style="display: flex; justify-content: center">
-        <div id="word-table-container"></div>
+    <div class="container">
+        <table id="word-table">
+            <tr>
+                <th style="width: 27%">id</th>
+                <th style="width: 27%">word</th>
+                <th style="width: 27%">hyphenated</th>
+                <th style="width: 19%" colspan="2">
+                    <button class="w-100" id="insert-word-btn">Insert</button>
+                </th>
+            </tr>
+        </table>
     </div>
-<script type="application/javascript" src="../javascript/WordList.js"></script>
+<script type="module" src="../script/WordList.js"></script>
 </body>
 </html>

@@ -23,7 +23,7 @@ class JsonResponse extends Response
 
         if ($this->body !== null) {
             echo json_encode($this->body);
-        } else {
+        } elseif ($this->code !== StatusCode::NO_CONTENT) {
             echo '""';
         }
     }

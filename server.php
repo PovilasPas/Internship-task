@@ -18,11 +18,17 @@ use App\Web\Router\Router;
 require_once __DIR__ . '/vendor/autoload.php';
 
 header('Access-Control-Allow-Origin: http://localhost:63342');
+header('Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE');
 
 $connection = ConnectionManager::getConnection();
 
 $parsed = parse_url($_SERVER['REQUEST_URI']);
 $method = $_SERVER['REQUEST_METHOD'];
+
+if ($method === 'OPTIONS') {
+    exit();
+}
+
 $data = json_decode(file_get_contents('php://input'), true);
 
 $request = new Request($parsed['path'], $data, $method);
@@ -67,6 +73,13 @@ $router->addRoute(
     new Route(
         '/^\/api\/words\/(\d+)$/',
         [
+            Request::GET => function (array $parameters) use ($connection, $builder): Response {
+                $id = (int) $parameters[0];
+                $repo = new WordRepository($connection, $builder);
+                $controller = new WordController($repo);
+
+                return $controller->get($id);
+            },
             Request::PUT => function (array $parameters, Request $request) use ($connection, $builder): Response {
                 $id = (int) $parameters[0];
                 $repo = new WordRepository($connection, $builder);
