@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\Database\QueryBuilder;
+
 class MatchRepository implements RepositoryInterface
 {
     public function __construct(
         private readonly \PDO $connection,
+        private readonly QueryBuilder $builder,
     ) {
 
     }
@@ -17,11 +20,7 @@ class MatchRepository implements RepositoryInterface
         if (empty($matches)) {
             return;
         }
-
-        $wildcard = '(?, ?)';
-        $query = 'INSERT INTO matches (rule_id, word_id) VALUES '
-            . str_repeat("$wildcard, ", count($matches) - 1)
-            . $wildcard;
+        $query = $this->builder->insert('matches', ['rule_id', 'word_id'], count($matches))->get();
         $data = [];
         foreach ($matches as $match) {
             $data[] = $match->getRuleId();

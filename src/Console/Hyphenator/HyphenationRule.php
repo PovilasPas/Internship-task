@@ -17,6 +17,7 @@ class HyphenationRule
         $this->original = $rule;
         $levels = [];
         $chars = str_split($rule);
+
         if (strlen($rule) > 0 && $this->isCurrentCharValid(0, $chars)) {
             $levels[] = 0;
         }
@@ -28,6 +29,7 @@ class HyphenationRule
                 $levels[] = (int) $chars[$i];
             }
         }
+
         $this->levels = $levels;
         $this->pattern = str_replace(self::VALID_NUMBERS, '', $rule);
     }
