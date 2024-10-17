@@ -37,7 +37,7 @@ function populateWordsTable() {
                     {},
                     elt('td', {}, {}, word.id),
                     elt('td', {}, {}, word.word),
-                    elt('td', {}, {}, word.hyphenated),
+                    elt('td', {}, {}, word.hyphenated || ''),
                     elt('td', {}, {}, updateBtn),
                     elt('td', {}, {}, deleteBtn)
                 )
