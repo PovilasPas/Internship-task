@@ -18,14 +18,14 @@ use App\Web\Router\Router;
 require_once __DIR__ . '/vendor/autoload.php';
 
 header('Access-Control-Allow-Origin: http://localhost:63342');
-header('Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE');
+header('Access-Control-Allow-Methods: *');
 
 $connection = ConnectionManager::getConnection();
 
 $parsed = parse_url($_SERVER['REQUEST_URI']);
 $method = $_SERVER['REQUEST_METHOD'];
 
-if ($method === 'OPTIONS') {
+if ($method === Request::OPTIONS) {
     exit();
 }
 
