@@ -17,7 +17,7 @@ function populateWordsTable() {
                     'button',
                     {
                         classList: ['w-100'],
-                        onclick: (e) => handleUpdateClick(e, word)
+                        onclick: (e) => handleUpdateClick(e, word.id)
                     },
                     {},
                     'Update'
@@ -48,8 +48,8 @@ function populateWordsTable() {
 
 populateWordsTable()
 
-function handleUpdateClick(e, word) {
-    window.location.assign(`UpdateWord.html?id=${word.id}&word=${word.word}&hyphenated=${word.hyphenated}`)
+function handleUpdateClick(e, wordId) {
+    window.location.assign(`UpdateWord.html?id=${wordId}`)
 }
 
 function handleDeleteClick(e, wordId) {

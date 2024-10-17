@@ -28,10 +28,13 @@ form.addEventListener('submit', (e) => {
 })
 
 function populateWordForm() {
-    const word = urlParams.get('word')
-    const hyphenated = urlParams.get('hyphenated')
-    wordInput.value = word
-    hyphenatedInput.value = hyphenated
+    const id = urlParams.get('id')
+    fetch(`http://localhost:8000/api/words/${id}`)
+        .then((res) => res.json())
+        .then((data) => {
+            wordInput.value = data.word
+            hyphenatedInput.value = data.hyphenated
+        })
 }
 
 populateWordForm()
