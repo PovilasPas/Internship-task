@@ -15,20 +15,20 @@ class LineProcessorTest extends TestCase
     public static function lineProvider(): array
     {
         return [
-            [
+            'Hyphenate paragraph of words' => [
                 [
                     'If once you start down the dark path, forever will it dominate',
                     'your destiny, consume you it will, as it did Obi-Wan\'s',
                     'apprentice.'
                 ],
             ],
-            [
+            'Hyphenate paragraph of words and numbers' => [
                 [
                     'Most wels catfish are mainly about 1.3-1.6 m (4 ft 3 in-5 ft 3',
                     'in) long; fish longer than 2 m (6 ft 7 in) are normally a rarity.'
                 ],
             ],
-            [
+            'Hyphenate a list of words' => [
                 [
                     'first',
                     'would',

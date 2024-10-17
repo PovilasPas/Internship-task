@@ -43,11 +43,14 @@ class WordRepository implements RepositoryInterface
         if (empty($words)) {
             return;
         }
+
         $query = $this->builder->insert('words', ['word'], count($words))->get();
         $data = [];
+
         foreach ($words as $word) {
             $data[] = $word->getWord();
         }
+
         $statement = $this->connection->prepare($query);
         $statement->execute($data);
     }

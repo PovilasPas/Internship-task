@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Test\DB;
+namespace Test\Database;
 
 use App\Database\JoinType;
 use App\Database\OperatorType;
