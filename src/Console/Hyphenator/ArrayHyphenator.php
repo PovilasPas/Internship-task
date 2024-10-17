@@ -24,11 +24,10 @@ class ArrayHyphenator implements HyphenatorInterface
             $wasFound = false;
             $indexFrom = -1;
             $indexTo = -1;
-            $from = -1;
             if (str_starts_with($rule->getRule(), '.') && $rule->matchesStart($word)) {
+                $from = 0;
                 $indexFrom = 0;
                 $indexTo = min($word->getLevelsLength(), $rule->getLevelsLength());
-                $from = 0;
                 $wasFound = true;
             } elseif (str_ends_with($rule->getRule(), '.') && $rule->matchesEnd($word)) {
                 $from = $word->getWordLength() - $rule->getRuleLength();

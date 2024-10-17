@@ -15,7 +15,7 @@ use App\Web\Response\StatusCode;
 use App\Web\Router\Route;
 use App\Web\Router\Router;
 
-require_once 'autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 $connection = ConnectionManager::getConnection();
 

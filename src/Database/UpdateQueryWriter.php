@@ -15,7 +15,7 @@ class UpdateQueryWriter implements QueryWriterInterface
             throw new \InvalidArgumentException('Invalid update query structure.');
         }
 
-        $update = 'UPDATE ' . $table . ' SET ' . implode(' = ?,', $fields) . ' = ?';
+        $update = 'UPDATE ' . $table . ' SET ' . implode(' = ?, ', $fields) . ' = ?';
 
         $wheres = $info->getWheres();
 

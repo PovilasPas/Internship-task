@@ -6,7 +6,6 @@ namespace App\Repository;
 
 use App\IOUtils;
 use App\Database\QueryBuilder;
-use App\Mapper\WordMapper;
 use App\Model\Word;
 
 class WordRepository implements RepositoryInterface
@@ -37,6 +36,23 @@ class WordRepository implements RepositoryInterface
         $data = $statement->fetch(\PDO::FETCH_ASSOC);
 
         return $data !== false ? new Word($data['word'], $data['id'], $data['hyphenated']) : null;
+    }
+
+    public function insertWords(array $words): void
+    {
+        if (empty($words)) {
+            return;
+        }
+
+        $query = $this->builder->insert('words', ['word'], count($words))->get();
+        $data = [];
+
+        foreach ($words as $word) {
+            $data[] = $word->getWord();
+        }
+
+        $statement = $this->connection->prepare($query);
+        $statement->execute($data);
     }
 
     public function insertWord(Word $word): void

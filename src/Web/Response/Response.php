@@ -8,7 +8,7 @@ abstract class Response
 {
     public function __construct(
         protected array $headers = [],
-        protected array $body = [],
+        protected ?array $body = null,
         protected StatusCode $code = StatusCode::OK,
     ) {
 
