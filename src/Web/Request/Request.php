@@ -11,6 +11,7 @@ class Request
     public const string PUT = 'PUT';
     public const string PATCH = 'PATCH';
     public const string DELETE = 'DELETE';
+    public const string OPTIONS = 'OPTIONS';
 
     private readonly string $method;
 
