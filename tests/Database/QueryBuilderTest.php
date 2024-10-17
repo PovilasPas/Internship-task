@@ -23,6 +23,7 @@ class QueryBuilderTest extends TestCase
     public function testSelect(): void
     {
         $table = 'words';
+
         $expected = 'SELECT * FROM words';
 
         $factory = new QueryWriterFactory();
@@ -36,6 +37,7 @@ class QueryBuilderTest extends TestCase
     {
         $table = 'words';
         $fields = ['id', 'word'];
+
         $expected = 'SELECT id, word FROM words';
 
         $actual = self::$builder->select($table, $fields)->get();
@@ -46,7 +48,9 @@ class QueryBuilderTest extends TestCase
     public function testSelectWithSingleWhereCondition(): void
     {
         $table = 'words';
+
         $condition = 'word LIKE ?';
+
         $expected = 'SELECT * FROM words WHERE word LIKE ?';
 
         $actual = self::$builder->select($table)->where($condition)->get();
@@ -57,9 +61,11 @@ class QueryBuilderTest extends TestCase
     public function testSelectWithMultipleWhereConditions(): void
     {
         $table = 'words';
+
         $condition1 = 'word LIKE ?';
         $condition2 = 'id BETWEEN ? AND ?';
         $condition3 = 'LENGTH(word) >= 10';
+
         $expected = 'SELECT * FROM words WHERE word LIKE ? AND id BETWEEN ? AND ? OR LENGTH(word) >= 10';
 
         $actual = self::$builder
@@ -76,7 +82,9 @@ class QueryBuilderTest extends TestCase
     {
         $table1 = 'words';
         $table2 = 'matches';
+
         $condition = 'words.id = matches.word_id';
+
         $expected = 'SELECT * FROM words LEFT JOIN matches ON words.id = matches.word_id';
 
         $actual = self::$builder
@@ -92,8 +100,10 @@ class QueryBuilderTest extends TestCase
         $table1 = 'words';
         $table2 = 'matches';
         $table3 = 'rules';
+
         $condition1 = 'words.id = matches.word_id';
         $condition2 = 'rules.id = matches.rule_id';
+
         $expected = 'SELECT * FROM words'
             . ' LEFT JOIN matches ON words.id = matches.word_id'
             . ' INNER JOIN rules ON rules.id = matches.rule_id';
@@ -111,8 +121,11 @@ class QueryBuilderTest extends TestCase
     {
         $table1 = 'words';
         $table2 = 'matches';
+
         $joinCondition = 'words.id = matches.word_id';
+
         $whereCondition = 'LENGTH(words.word) >= 10';
+
         $expected = 'SELECT * FROM words '
             . 'INNER JOIN matches ON words.id = matches.word_id '
             . 'WHERE LENGTH(words.word) >= 10';
@@ -131,11 +144,14 @@ class QueryBuilderTest extends TestCase
         $table1 = 'words';
         $table2 = 'matches';
         $table3 = 'rules';
+
         $joinCondition1 = 'words.id = matches.word_id';
         $joinCondition2 = 'rules.id = matches.rule_id';
+
         $whereCondition1 = 'words.word LIKE ?';
         $whereCondition2 = 'words.id BETWEEN ? AND ?';
         $whereCondition3 = 'LENGTH(words.word) >= 10';
+
         $expected = 'SELECT * FROM words '
             . 'LEFT JOIN matches ON words.id = matches.word_id '
             . 'INNER JOIN rules ON rules.id = matches.rule_id '
@@ -159,6 +175,7 @@ class QueryBuilderTest extends TestCase
     {
         $table = 'words';
         $fields = ['word'];
+
         $expected = 'INSERT INTO words (word) VALUES (?)';
 
         $actual = self::$builder->insert($table, $fields)->get();
@@ -170,6 +187,7 @@ class QueryBuilderTest extends TestCase
     {
         $table = 'words';
         $fields = ['word'];
+
         $expected = 'INSERT IGNORE INTO words (word) VALUES (?)';
 
         $actual = self::$builder->insert($table, $fields, 1, true)->get();
@@ -182,6 +200,7 @@ class QueryBuilderTest extends TestCase
         $table = 'words';
         $fields = ['word'];
         $rows = 10;
+
         $expected = 'INSERT INTO words (word) VALUES (?), (?), (?), (?), (?), (?), (?), (?), (?), (?)';
 
         $actual = self::$builder->insert($table, $fields, $rows)->get();
@@ -193,6 +212,7 @@ class QueryBuilderTest extends TestCase
     {
         $table = 'words';
         $fields = ['word', 'hyphenated'];
+
         $expected = 'UPDATE words SET word = ?, hyphenated = ?';
 
         $actual = self::$builder->update($table, $fields)->get();
@@ -204,7 +224,9 @@ class QueryBuilderTest extends TestCase
     {
         $table = 'words';
         $fields = ['word', 'hyphenated'];
+
         $condition = 'id = ?';
+
         $expected = 'UPDATE words SET word = ?, hyphenated = ? WHERE id = ?';
 
         $actual = self::$builder->update($table, $fields)->where($condition)->get();
@@ -215,6 +237,7 @@ class QueryBuilderTest extends TestCase
     public function testDelete(): void
     {
         $table = 'words';
+
         $expected = 'DELETE FROM words';
 
         $actual = self::$builder->delete($table)->get();
@@ -225,9 +248,12 @@ class QueryBuilderTest extends TestCase
     public function testDeleteWithWhereCondition(): void
     {
         $table = 'words';
+
         $condition1 = 'id = ?';
         $condition2 = 'word LIKE ?';
+
         $expected = 'DELETE FROM words WHERE id = ? OR word LIKE ?';
+
         $actual = self::$builder
             ->delete($table)
             ->where($condition1)
