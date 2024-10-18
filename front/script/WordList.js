@@ -1,4 +1,5 @@
 import {elt} from './Utils.js'
+import env from "../environment/env.js";
 
 const table = document.querySelector('#word-table')
 
@@ -9,7 +10,7 @@ insertBtn.addEventListener('click', (e) => {
 })
 
 function populateWordsTable() {
-    fetch('http://localhost:8000/api/words')
+    fetch(`${env.BACKEND_API}/words`)
         .then((res) => res.json())
         .then((data) => {
             for (let word of data) {
@@ -53,7 +54,7 @@ function handleUpdateClick(e, wordId) {
 }
 
 function handleDeleteClick(e, wordId) {
-    fetch(`http://localhost:8000/api/words/${wordId}`, {
+    fetch(`${env.BACKEND_API}/words/${wordId}`, {
         method: 'DELETE'
     }).then(() => {
         e.target.parentNode.parentNode.remove();
