@@ -1,4 +1,9 @@
+<<<<<<< HEAD:front/script/WordList.js
 import {createElement} from './Utils.js'
+=======
+import {elt} from './Utils.js'
+import env from "../environment/env.js";
+>>>>>>> a3735bc (dockerization):frontend/script/WordList.js
 
 const table = document.querySelector('#word-table')
 
@@ -53,7 +58,7 @@ function handleUpdateClick(e, wordId) {
 }
 
 function handleDeleteClick(e, wordId) {
-    fetch(`http://localhost:8000/api/words/${wordId}`, {
+    fetch(`${env.BACKEND_API}/words/${wordId}`, {
         method: 'DELETE'
     }).then(() => {
         e.target.parentNode.parentNode.remove();

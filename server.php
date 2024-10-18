@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 use App\Database\ConnectionManager;
-use App\Database\QueryBuilder;
-use App\Database\QueryWriterFactory;
 use App\Dependency\DependencyLoader;
 use App\Repository\WordRepository;
 use App\Web\Controller\WordController;
@@ -13,11 +11,10 @@ use App\Web\Response\JsonResponse;
 use App\Web\Response\Response;
 use App\Web\Response\StatusCode;
 use App\Web\Router\Route;
-use App\Web\Router\Router;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-header('Access-Control-Allow-Origin: http://localhost:63342');
+header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: *');
 
 $connection = ConnectionManager::getConnection();

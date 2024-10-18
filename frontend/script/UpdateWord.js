@@ -1,3 +1,4 @@
+import env from '../environment/env.js'
 const form = document.querySelector('#word-update-form')
 
 const wordInput = form.querySelector('input[name=word]')
@@ -17,7 +18,7 @@ form.addEventListener('submit', (e) => {
     }
     const json = JSON.stringify(data)
 
-    fetch(`http://localhost:8000/api/words/${id}`, {
+    fetch(`${env.BACKEND_API}/words/${id}`, {
         method: 'PUT',
         body: json,
     })
