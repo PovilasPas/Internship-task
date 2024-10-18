@@ -6,3 +6,5 @@ vendor/
 logs/
 var/
 vendor/
+frontend/environment/env.js
+dockerfiles/*/.env
