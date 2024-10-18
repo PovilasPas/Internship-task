@@ -8,10 +8,10 @@ form.addEventListener('submit', (e) => {
     const json = JSON.stringify(data)
     fetch('http://localhost:8000/api/words', {
             method: 'POST',
-            body: json
+            body: json,
     })
-        .then((res) => res.json())
-        .then((data) => {
-            window.location.assign('WordList.html')
-        })
+    .then((res) => res.json())
+    .then((data) => {
+        window.location.assign('WordList.html')
+    })
 })

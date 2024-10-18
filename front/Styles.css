@@ -28,6 +28,14 @@ input {
     margin-bottom: 3px;
 }
 
+.cell-fat {
+    width: 27%;
+}
+
+.cell-slim {
+    width: 19%;
+}
+
 #word-table {
     width: 50%;
     table-layout: fixed;

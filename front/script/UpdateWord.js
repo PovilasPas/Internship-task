@@ -13,28 +13,28 @@ form.addEventListener('submit', (e) => {
     const hyphenated = hyphenatedInput.value
     const data = {
         word,
-        hyphenated
+        hyphenated,
     }
     const json = JSON.stringify(data)
 
     fetch(`http://localhost:8000/api/words/${id}`, {
         method: 'PUT',
-        body: json
+        body: json,
     })
-        .then((res) => res.text())
-        .then((data) => {
+    .then((res) => res.text())
+    .then((data) => {
             window.location.assign('WordList.html')
-        })
+    })
 })
 
 function populateWordForm() {
     const id = urlParams.get('id')
     fetch(`http://localhost:8000/api/words/${id}`)
-        .then((res) => res.json())
-        .then((data) => {
+    .then((res) => res.json())
+    .then((data) => {
             wordInput.value = data.word
             hyphenatedInput.value = data.hyphenated
-        })
+    })
 }
 
 populateWordForm()

@@ -46,7 +46,7 @@ class WordController
         $serialized = $mapper->serialize($word);
 
         return new JsonResponse(
-            body: $serialized
+            body: $serialized,
         );
     }
 

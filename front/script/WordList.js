@@ -1,49 +1,49 @@
-import {elt} from './Utils.js'
+import {createElement} from './Utils.js'
 
 const table = document.querySelector('#word-table')
 
-const insertBtn = document.querySelector('#insert-word-btn')
+const insertButton = document.querySelector('#insert-word-btn')
 
-insertBtn.addEventListener('click', (e) => {
+insertButton.addEventListener('click', (e) => {
     window.location.assign('InsertWord.html')
 })
 
 function populateWordsTable() {
     fetch('http://localhost:8000/api/words')
-        .then((res) => res.json())
-        .then((data) => {
-            for (let word of data) {
-                const updateBtn = elt(
-                    'button',
-                    {
-                        classList: ['w-100'],
-                        onclick: (e) => handleUpdateClick(e, word.id)
-                    },
-                    {},
-                    'Update'
-                )
-                const deleteBtn = elt(
-                    'button',
-                    {
-                        classList: ['w-100'],
-                        onclick: (e) => handleDeleteClick(e, word.id)
-                    }
-                    , {},
-                    'Delete'
-                )
-                const row = elt(
-                    'tr',
-                    {},
-                    {},
-                    elt('td', {}, {}, word.id),
-                    elt('td', {}, {}, word.word),
-                    elt('td', {}, {}, word.hyphenated || ''),
-                    elt('td', {}, {}, updateBtn),
-                    elt('td', {}, {}, deleteBtn)
-                )
-                table.appendChild(row)
-            }
-        })
+    .then((res) => res.json())
+    .then((data) => {
+        for (let word of data) {
+            const updateButton = createElement(
+                'button',
+                {
+                    classList: ['w-100'],
+                    onclick: (e) => handleUpdateClick(e, word.id)
+                },
+                {},
+                'Update',
+            )
+            const deleteButton = createElement(
+                'button',
+                {
+                    classList: ['w-100'],
+                    onclick: (e) => handleDeleteClick(e, word.id)
+                }
+                , {},
+                'Delete',
+            )
+            const row = createElement(
+                'tr',
+                {},
+                {},
+                createElement('td', {}, {}, word.id),
+                createElement('td', {}, {}, word.word),
+                createElement('td', {}, {}, word.hyphenated || ''),
+                createElement('td', {}, {}, updateButton),
+                createElement('td', {}, {}, deleteButton),
+            )
+            table.appendChild(row)
+        }
+    })
 }
 
 populateWordsTable()
