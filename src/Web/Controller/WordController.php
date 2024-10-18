@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Web\Controller;
 
+use App\Logger\SimpleLogger;
 use App\Mapper\WordMapper;
 use App\Model\Word;
 use App\Repository\WordRepository;
@@ -25,6 +26,24 @@ class WordController
         $words = $this->repo->getWords();
         $mapper = new WordMapper();
         $serialized = array_map(fn (Word $item): ?array => $mapper->serialize($item), $words);
+
+        return new JsonResponse(
+            body: $serialized,
+        );
+    }
+
+    public function get(int $id): Response {
+        $word = $this->repo->getWord($id);
+
+        if ($word === null) {
+            return new JsonResponse(
+                body: ['message' => 'Not found.'],
+                code: StatusCode::NOT_FOUND,
+            );
+        }
+
+        $mapper = new WordMapper();
+        $serialized = $mapper->serialize($word);
 
         return new JsonResponse(
             body: $serialized,
@@ -56,7 +75,6 @@ class WordController
                 code: StatusCode::NOT_FOUND,
             );
         }
-
         $mapper = new WordMapper();
         $deserialized = $mapper->deserialize($request->getData());
         $this->repo->updateWord($id, $deserialized);

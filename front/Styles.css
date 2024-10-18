@@ -1,0 +1,43 @@
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 5px;
+}
+
+label {
+    display: block;
+}
+
+input {
+    box-sizing: border-box;
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.input-container {
+    margin-bottom: 3px;
+}
+
+.cell-fat {
+    width: 27%;
+}
+
+.cell-slim {
+    width: 19%;
+}
+
+#word-table {
+    width: 50%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}

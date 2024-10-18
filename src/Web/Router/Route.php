@@ -32,6 +32,7 @@ class Route
         if (!array_key_exists($method, $this->handlers)) {
             return $notAllowed;
         }
+
         $handler = $this->handlers[$method];
 
         return $handler($parameters, $request);
